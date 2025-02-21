@@ -6,6 +6,16 @@
             "caseSensitive": true
         },
         {
+            "wrong": "mac book",
+            "correct": "MacBook",
+            "caseSensitive": true
+        },
+        {
+            "wrong": "macbook",
+            "correct": "MacBook",
+            "caseSensitive": true
+        },
+        {
             "wrong": "iwatch",
             "correct": "Apple Watch",
             "caseSensitive": false

@@ -68,9 +68,9 @@ client.on(Events.MessageCreate, async message => {
     const mistakes = checkSpelling(message.content);
 
     if (mistakes.length > 0) {
-        let response = "提醒：\n";
+        let response = "";
         mistakes.forEach(mistake => {
-            response += `什麼"${mistake.wrong}"？"${mistake.correct}啦"\n`;
+            response += `什麼${mistake.wrong}？${mistake.correct}啦\n`;
         });
 
         await message.reply(response);
