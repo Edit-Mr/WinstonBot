@@ -1,0 +1,54 @@
+{
+    "rules": [
+        {
+            "wrong": "macbook",
+            "correct": "MacBook",
+            "caseSensitive": true
+        },
+        {
+            "wrong": "iwatch",
+            "correct": "Apple Watch",
+            "caseSensitive": false
+        },
+        {
+            "wrong": "賬號",
+            "correct": "帳號",
+            "caseSensitive": false
+        },
+        {
+            "wrong": "優惠卷",
+            "correct": "優惠券",
+            "caseSensitive": false
+        },
+        {
+            "wrong": "禮卷",
+            "correct": "禮券",
+            "caseSensitive": false
+        },
+        {
+            "wrong": "文檔",
+            "correct": "文件",
+            "caseSensitive": false
+        },
+        {
+            "wrong": "幀",
+            "correct": "格",
+            "caseSensitive": false
+        },
+        {
+            "wrong": "創建",
+            "correct": "建立",
+            "caseSensitive": false
+        },
+        {
+            "wrong": "身份組",
+            "correct": "身分組",
+            "caseSensitive": false
+        },
+        {
+            "wrong": "宏",
+            "correct": "巨集",
+            "caseSensitive": false
+        }
+    ]
+}
