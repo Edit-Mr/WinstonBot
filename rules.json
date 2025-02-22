@@ -116,8 +116,23 @@
             "caseSensitive": false
         },
         {
+            "wrong": "數據庫",
+            "correct": "資料庫",
+            "caseSensitive": false
+        },
+        {
             "wrong": "大數據",
             "correct": "巨量資料",
+            "caseSensitive": false
+        },
+        {
+            "wrong": "模塊",
+            "correct": "模組",
+            "caseSensitive": false
+        },
+        {
+            "wrong": "運營",
+            "correct": "營運",
             "caseSensitive": false
         },
         {
@@ -146,8 +161,18 @@
             "caseSensitive": false
         },
         {
+            "wrong": "設備",
+            "correct": "裝置」/「設備",
+            "caseSensitive": false
+        },
+        {
+            "wrong": "禁用",
+            "correct": "停用」/「禁用",
+            "caseSensitive": false
+        },
+        {
             "wrong": "擴展",
-            "correct": "擴充」/「擴充功能」/「擴充套件」/「拓展",
+            "correct": "擴充」/「擴充功能」/「擴充套件」/「拓展」/「延伸",
             "caseSensitive": false
         },
         {
@@ -163,6 +188,41 @@
         {
             "wrong": "數據分析",
             "correct": "資料分析」/「數值分析",
+            "caseSensitive": false
+        },
+        {
+            "wrong": "默認",
+            "correct": "預設」/「預設值」/「默認",
+            "caseSensitive": false
+        },
+        {
+            "wrong": "字符",
+            "correct": "字元」/「字形」/「字符",
+            "caseSensitive": false
+        },
+        {
+            "wrong": "界面",
+            "correct": "介面」/「界面",
+            "caseSensitive": false
+        },
+        {
+            "wrong": "信息",
+            "correct": "資訊」/「訊息」/「消息」/「信息",
+            "caseSensitive": false
+        },
+        {
+            "wrong": "鏈接",
+            "correct": "連結」/「鏈結",
+            "caseSensitive": false
+        },
+        {
+            "wrong": "通過",
+            "correct": "透過」/「通過",
+            "caseSensitive": false
+        },
+        {
+            "wrong": "帖子",
+            "correct": "貼文」/「討論串",
             "caseSensitive": false
         }
     ]
