@@ -59,6 +59,11 @@
             "wrong": "宏",
             "correct": "巨集",
             "caseSensitive": false
+        },
+        {
+            "wrong": "Sitcon",
+            "correct": "SITCON",
+            "caseSensitive": true
         }
     ]
 }
