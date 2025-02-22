@@ -136,6 +136,11 @@
             "caseSensitive": false
         },
         {
+            "wrong": "坐標",
+            "correct": "座標",
+            "caseSensitive": false
+        },
+        {
             "wrong": "文檔",
             "correct": "文件」/「說明文件",
             "caseSensitive": false
