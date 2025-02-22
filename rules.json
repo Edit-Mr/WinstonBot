@@ -1,6 +1,11 @@
 {
     "rules": [
         {
+            "wrong": "coscup",
+            "correct": "COSCUP",
+            "caseSensitive": true
+        },
+        {
             "wrong": "iwatch",
             "correct": "Apple Watch",
             "caseSensitive": false
@@ -16,7 +21,7 @@
             "caseSensitive": true
         },
         {
-            "wrong": "macbook",
+            "wrong": "Macbook",
             "correct": "MacBook",
             "caseSensitive": true
         },
