@@ -21,8 +21,43 @@
             "caseSensitive": true
         },
         {
+            "wrong": "mediawiki",
+            "correct": "MediaWiki",
+            "caseSensitive": true
+        },
+        {
+            "wrong": "mediaWiki",
+            "correct": "MediaWiki",
+            "caseSensitive": true
+        },
+        {
+            "wrong": "Mediawiki",
+            "correct": "MediaWiki",
+            "caseSensitive": true
+        },
+        {
             "wrong": "Sitcon",
             "correct": "SITCON",
+            "caseSensitive": true
+        },
+        {
+            "wrong": "wikidata",
+            "correct": "Wikidata",
+            "caseSensitive": true
+        },
+        {
+            "wrong": "WikiData",
+            "correct": "Wikidata",
+            "caseSensitive": true
+        },
+        {
+            "wrong": "wikimedia",
+            "correct": "Wikimedia",
+            "caseSensitive": true
+        },
+        {
+            "wrong": "WikiMedia",
+            "correct": "Wikimedia",
             "caseSensitive": true
         },
         {
@@ -38,16 +73,6 @@
         {
             "wrong": "禮卷",
             "correct": "禮券",
-            "caseSensitive": false
-        },
-        {
-            "wrong": "文檔",
-            "correct": "文件」/「說明文件",
-            "caseSensitive": false
-        },
-        {
-            "wrong": "創建",
-            "correct": "建立」/「新增",
             "caseSensitive": false
         },
         {
@@ -78,6 +103,66 @@
         {
             "wrong": "圖標",
             "correct": "圖示",
+            "caseSensitive": false
+        },
+        {
+            "wrong": "緩存",
+            "correct": "快取",
+            "caseSensitive": false
+        },
+        {
+            "wrong": "封禁",
+            "correct": "封鎖",
+            "caseSensitive": false
+        },
+        {
+            "wrong": "大數據",
+            "correct": "巨量資料",
+            "caseSensitive": false
+        },
+        {
+            "wrong": "文檔",
+            "correct": "文件」/「說明文件",
+            "caseSensitive": false
+        },
+        {
+            "wrong": "創建",
+            "correct": "建立」/「新增」/「創立",
+            "caseSensitive": false
+        },
+        {
+            "wrong": "訪問",
+            "correct": "存取」/「造訪」/「訪問",
+            "caseSensitive": false
+        },
+        {
+            "wrong": "舉報",
+            "correct": "檢舉」/「回報」/「舉發",
+            "caseSensitive": false
+        },
+        {
+            "wrong": "反饋",
+            "correct": "回饋」/「意見回饋」/「回授",
+            "caseSensitive": false
+        },
+        {
+            "wrong": "擴展",
+            "correct": "擴充」/「擴充功能」/「擴充套件」/「拓展",
+            "caseSensitive": false
+        },
+        {
+            "wrong": "配置",
+            "correct": "設定」/「組態」/「配置",
+            "caseSensitive": false
+        },
+        {
+            "wrong": "數據",
+            "correct": "資料」/「數值",
+            "caseSensitive": false
+        },
+        {
+            "wrong": "數據分析",
+            "correct": "資料分析」/「數值分析",
             "caseSensitive": false
         }
     ]
