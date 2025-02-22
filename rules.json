@@ -136,8 +136,23 @@
             "caseSensitive": false
         },
         {
-            "wrong": "坐標",
-            "correct": "座標",
+            "wrong": "重命名",
+            "correct": "重新命名",
+            "caseSensitive": false
+        },
+        {
+            "wrong": "服務器",
+            "correct": "伺服器",
+            "caseSensitive": false
+        },
+        {
+            "wrong": "保存",
+            "correct": "儲存」/「保存",
+            "caseSensitive": false
+        },
+        {
+            "wrong": "質量",
+            "correct": "品質」/「質量",
             "caseSensitive": false
         },
         {
