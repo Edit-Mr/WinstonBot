@@ -146,6 +146,11 @@
             "caseSensitive": false
         },
         {
+            "wrong": "短視頻",
+            "correct": "短影音",
+            "caseSensitive": false
+        },
+        {
             "wrong": "保存",
             "correct": "儲存」/「保存",
             "caseSensitive": false
@@ -243,6 +248,16 @@
         {
             "wrong": "帖子",
             "correct": "貼文」/「討論串",
+            "caseSensitive": false
+        },
+        {
+            "wrong": "視頻",
+            "correct": "影片」/「視頻",
+            "caseSensitive": false
+        },
+        {
+            "wrong": "短影片",
+            "correct": "短影音」/「短片",
             "caseSensitive": false
         }
     ]
