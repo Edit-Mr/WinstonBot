@@ -259,6 +259,11 @@
             "wrong": "短影片",
             "correct": "短影音」/「短片",
             "caseSensitive": false
+        },
+        {
+            "wrong": "優化",
+            "correct": "改善」/「改進」/「最佳化",
+            "caseSensitive": false
         }
     ]
 }
