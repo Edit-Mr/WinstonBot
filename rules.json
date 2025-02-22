@@ -1,9 +1,9 @@
 {
     "rules": [
         {
-            "wrong": "macbook",
-            "correct": "MacBook",
-            "caseSensitive": true
+            "wrong": "iwatch",
+            "correct": "Apple Watch",
+            "caseSensitive": false
         },
         {
             "wrong": "mac book",
@@ -16,9 +16,14 @@
             "caseSensitive": true
         },
         {
-            "wrong": "iwatch",
-            "correct": "Apple Watch",
-            "caseSensitive": false
+            "wrong": "macbook",
+            "correct": "MacBook",
+            "caseSensitive": true
+        },
+        {
+            "wrong": "Sitcon",
+            "correct": "SITCON",
+            "caseSensitive": true
         },
         {
             "wrong": "賬號",
@@ -37,17 +42,22 @@
         },
         {
             "wrong": "文檔",
-            "correct": "文件",
-            "caseSensitive": false
-        },
-        {
-            "wrong": "幀",
-            "correct": "格",
+            "correct": "文件」/「說明文件",
             "caseSensitive": false
         },
         {
             "wrong": "創建",
-            "correct": "建立",
+            "correct": "建立」/「新增",
+            "caseSensitive": false
+        },
+        {
+            "wrong": "身份",
+            "correct": "身分",
+            "caseSensitive": false
+        },
+        {
+            "wrong": "身份證",
+            "correct": "身分證",
             "caseSensitive": false
         },
         {
@@ -56,14 +66,19 @@
             "caseSensitive": false
         },
         {
-            "wrong": "宏",
-            "correct": "巨集",
+            "wrong": "鼠標",
+            "correct": "滑鼠",
             "caseSensitive": false
         },
         {
-            "wrong": "Sitcon",
-            "correct": "SITCON",
-            "caseSensitive": true
+            "wrong": "光標",
+            "correct": "游標",
+            "caseSensitive": false
+        },
+        {
+            "wrong": "圖標",
+            "correct": "圖示",
+            "caseSensitive": false
         }
     ]
 }
