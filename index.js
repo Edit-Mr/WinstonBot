@@ -70,7 +70,7 @@ client.on(Events.MessageCreate, async message => {
     if (mistakes.length > 0) {
         const response = mistakes
             .map((mistake) =>
-                `~~什麼${mistake.wrong}？「${mistake.correct}」啦（）。~~\n`
+                `~~《${mistake.wrong}》~~（✗）\n「${mistake.correct}」（✓）~~\n`
             )
             .join("");
 
