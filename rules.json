@@ -1,11 +1,6 @@
 {
     "rules": [
         {
-            "wrong": "coscup",
-            "correct": "COSCUP",
-            "caseSensitive": true
-        },
-        {
             "wrong": "iwatch",
             "correct": "Apple Watch",
             "caseSensitive": false
@@ -16,18 +11,8 @@
             "caseSensitive": true
         },
         {
-            "wrong": "macbook",
-            "correct": "MacBook",
-            "caseSensitive": true
-        },
-        {
             "wrong": "Macbook",
             "correct": "MacBook",
-            "caseSensitive": true
-        },
-        {
-            "wrong": "mediawiki",
-            "correct": "MediaWiki",
             "caseSensitive": true
         },
         {
@@ -46,18 +31,13 @@
             "caseSensitive": true
         },
         {
-            "wrong": "wikidata",
-            "correct": "Wikidata",
-            "caseSensitive": true
-        },
-        {
             "wrong": "WikiData",
             "correct": "Wikidata",
             "caseSensitive": true
         },
         {
-            "wrong": "wikimedia",
-            "correct": "Wikimedia",
+            "wrong": "wikiData",
+            "correct": "Wikidata",
             "caseSensitive": true
         },
         {
