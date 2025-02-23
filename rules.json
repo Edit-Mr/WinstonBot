@@ -136,6 +136,21 @@
             "caseSensitive": false
         },
         {
+            "wrong": "因該",
+            "correct": "應該",
+            "caseSensitive": false
+        },
+        {
+            "wrong": "半型",
+            "correct": "半形",
+            "caseSensitive": false
+        },
+        {
+            "wrong": "全型",
+            "correct": "全形",
+            "caseSensitive": false
+        },
+        {
             "wrong": "Chinese",
             "correct": "Mandarin」/「Cantonese」/「Hokkien」/「……",
             "caseSensitive": false
