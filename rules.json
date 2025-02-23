@@ -136,6 +136,11 @@
             "caseSensitive": false
         },
         {
+            "wrong": "Chinese",
+            "correct": "Mandarin」/「Cantonese」/「Hokkien」/「……",
+            "caseSensitive": false
+        },
+        {
             "wrong": "保存",
             "correct": "儲存」/「保存",
             "caseSensitive": false
@@ -248,6 +253,11 @@
         {
             "wrong": "優化",
             "correct": "改善」/「改進」/「最佳化",
+            "caseSensitive": false
+        },
+        {
+            "wrong": "佈局",
+            "correct": "配置」/「布局",
             "caseSensitive": false
         }
     ]
