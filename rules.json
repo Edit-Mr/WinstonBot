@@ -26,9 +26,19 @@
             "caseSensitive": true
         },
         {
+            "wrong": "qrcode",
+            "correct": "QR code",
+            "caseSensitive": false
+        },
+        {
             "wrong": "Sitcon",
             "correct": "SITCON",
             "caseSensitive": true
+        },
+        {
+            "wrong": "wifi",
+            "correct": "Wi-Fi",
+            "caseSensitive": false
         },
         {
             "wrong": "WikiData",
@@ -148,6 +158,16 @@
         {
             "wrong": "全型",
             "correct": "全形",
+            "caseSensitive": false
+        },
+        {
+            "wrong": "示例",
+            "correct": "範例",
+            "caseSensitive": false
+        },
+        {
+            "wrong": "當前",
+            "correct": "目前",
             "caseSensitive": false
         },
         {
