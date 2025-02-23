@@ -274,6 +274,11 @@
             "wrong": "佈局",
             "correct": "配置」/「布局",
             "caseSensitive": false
+        },
+        {
+            "wrong": "獲取",
+            "correct": "取得」/「獲得",
+            "caseSensitive": false
         }
     ]
 }
