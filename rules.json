@@ -299,6 +299,11 @@
             "wrong": "獲取",
             "correct": "取得」/「獲得",
             "caseSensitive": false
+        },
+        {
+            "wrong": "智能",
+            "correct": "智慧」/「智力",
+            "caseSensitive": false
         }
     ]
 }
