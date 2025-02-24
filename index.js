@@ -64,17 +64,21 @@ client.once(Events.ClientReady, async () => {
 client.on(Events.MessageCreate, async message => {
     // 忽略 bot 的訊息
     if (message.author.bot) return;
+    try {
+        const mistakes = checkSpelling(message.content);
 
-    const mistakes = checkSpelling(message.content);
+        if (mistakes.length > 0) {
+            const response = mistakes
+                .map(
+                    mistake =>
+                        `~~《${mistake.wrong}》（✗）~~\n「${mistake.correct}」（✓）\n`
+                )
+                .join("");
 
-    if (mistakes.length > 0) {
-        const response = mistakes
-            .map((mistake) =>
-                `~~《${mistake.wrong}》（✗）~~\n「${mistake.correct}」（✓）\n`
-            )
-            .join("");
-
-        await message.reply(response);
+            await message.reply(response);
+        }
+    } catch (err) {
+        console.error(err);
     }
 });
 
