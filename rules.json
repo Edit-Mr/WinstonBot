@@ -314,6 +314,11 @@
             "wrong": "設置",
             "correct": "設定」/「設置",
             "caseSensitive": false
+        },
+        {
+            "wrong": "sitcon",
+            "correct": "SITCON",
+            "caseSensitive": false
         }
     ]
 }
