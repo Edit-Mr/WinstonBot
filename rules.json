@@ -318,7 +318,12 @@
         {
             "wrong": "sitcon",
             "correct": "SITCON",
-            "caseSensitive": false
+            "caseSensitive": true
+        },
+        {
+            "wrong": "Sitcon",
+            "correct": "SITCON",
+            "caseSensitive": true
         }
     ]
 }
