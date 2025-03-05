@@ -321,8 +321,8 @@
             "caseSensitive": true
         },
         {
-            "wrong": "Sitcon",
-            "correct": "SITCON",
+            "wrong": "卸載",
+            "correct": "解除安裝」／「卸載",
             "caseSensitive": true
         }
     ]
