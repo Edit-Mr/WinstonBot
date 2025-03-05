@@ -5,7 +5,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "start": "node index.js",
+    "start": "node --experimental-strip-types index.ts",
     "test": "vitest run"
   },
   "keywords": [],
@@ -17,6 +17,8 @@
     "dotenv": "^16.4.7"
   },
   "devDependencies": {
+    "@types/node": "^22.13.9",
+    "typescript": "^5.8.2",
     "vitest": "^3.0.7"
   }
 }

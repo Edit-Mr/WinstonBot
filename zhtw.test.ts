@@ -1,5 +1,5 @@
 import { expect, test, suite } from "vitest";
-import { detectChineseType } from "./zhtw.js";
+import { detectChineseType } from "./zhtw.ts";
 
 suite("detectChineseType", () => {
   suite("純繁體中文文字", () => {

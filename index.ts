@@ -1,10 +1,6 @@
-/** @format */
-
-//@ts-check
-
 import { Client, Events, GatewayIntentBits } from "discord.js";
 import { config } from "dotenv";
-import { Determiner } from "./determiner";
+import { Determiner } from "./determiner.ts";
 
 // 載入環境變數
 config();
