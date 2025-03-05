@@ -22,8 +22,9 @@ console.log("正在載入規則檔案……");
 const determiner = await Determiner.fromFile("./rules.json").catch(err => {
     console.error(err);
     process.exit(1);
-}).finally(() => {
+}).then((determiner) => {
     console.log("成功載入規則檔案");
+    return determiner;
 })
 
 // 當 bot 準備就緒時
