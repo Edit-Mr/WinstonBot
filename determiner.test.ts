@@ -1,16 +1,11 @@
-//@ts-check
-
 import { suite } from "vitest";
-import { Determiner } from "./determiner";
+import { Determiner, type SpellingRule } from "./determiner.ts";
 import { expect } from "vitest";
 import { test } from "vitest";
 
 suite("Determiner", () => {
     test("繁體中文規則應該套用在繁體中文上", () => {
-        /**
-         * @type {import("./determiner").SpellingRule[]}
-         */
-        const rules = [
+        const rules: SpellingRule[] = [
             {
                 wrong: "你好",
                 correct: "Hello",
@@ -27,10 +22,7 @@ suite("Determiner", () => {
     });
 
     test("繁體中文規則應該套用在中性規則上", () => {
-        /**
-         * @type {import("./determiner").SpellingRule[]}
-         */
-        const rules = [
+        const rules: SpellingRule[] = [
             {
                 wrong: "你好",
                 correct: "Hello",
@@ -47,10 +39,7 @@ suite("Determiner", () => {
     });
 
     test("繁體中文規則不該套用在簡體中文上", () => {
-        /**
-         * @type {import("./determiner").SpellingRule[]}
-         */
-        const rules = [
+        const rules: SpellingRule[] = [
             {
                 wrong: "你好",
                 correct: "Hello",
@@ -67,10 +56,7 @@ suite("Determiner", () => {
     });
 
     test("非繁體中文規則應該套用在簡體中文上", () => {
-        /**
-         * @type {import("./determiner").SpellingRule[]}
-         */
-        const rules = [
+        const rules: SpellingRule[] = [
             {
                 wrong: "你好",
                 correct: "Hello",
