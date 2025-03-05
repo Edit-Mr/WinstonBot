@@ -5,7 +5,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "start": "node index.js",
+    "start": "node --experimental-strip-types index.ts",
     "test": "vitest run"
   },
   "keywords": [],
