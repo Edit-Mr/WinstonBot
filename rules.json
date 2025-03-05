@@ -73,7 +73,8 @@
         {
             "wrong": "身份",
             "correct": "身分",
-            "caseSensitive": false
+            "caseSensitive": false,
+            "traditionalOnly": true
         },
         {
             "wrong": "身份證",
@@ -83,7 +84,8 @@
         {
             "wrong": "身份組",
             "correct": "身分組",
-            "caseSensitive": false
+            "caseSensitive": false,
+            "traditionalOnly": true
         },
         {
             "wrong": "鼠標",
@@ -163,7 +165,8 @@
         {
             "wrong": "示例",
             "correct": "範例",
-            "caseSensitive": false
+            "caseSensitive": false,
+            "traditionalOnly": true
         },
         {
             "wrong": "當前",
@@ -173,7 +176,8 @@
         {
             "wrong": "內卷",
             "correct": "內耗",
-            "caseSensitive": false
+            "caseSensitive": false,
+            "traditionalOnly": true
         },
         {
             "wrong": "Chinese",
@@ -183,7 +187,8 @@
         {
             "wrong": "保存",
             "correct": "儲存」/「保存",
-            "caseSensitive": false
+            "caseSensitive": false,
+            "traditionalOnly": true
         },
         {
             "wrong": "質量",
@@ -223,7 +228,8 @@
         {
             "wrong": "禁用",
             "correct": "停用」/「禁用",
-            "caseSensitive": false
+            "caseSensitive": false,
+            "traditionalOnly": true
         },
         {
             "wrong": "擴展",
@@ -263,7 +269,8 @@
         {
             "wrong": "信息",
             "correct": "資訊」/「訊息」/「消息」/「信息",
-            "caseSensitive": false
+            "caseSensitive": false,
+            "traditionalOnly": true
         },
         {
             "wrong": "鏈接",
@@ -278,7 +285,8 @@
         {
             "wrong": "帖子",
             "correct": "貼文」/「討論串",
-            "caseSensitive": false
+            "caseSensitive": false,
+            "traditionalOnly": true
         },
         {
             "wrong": "視頻",
@@ -298,7 +306,8 @@
         {
             "wrong": "佈局",
             "correct": "配置」/「布局",
-            "caseSensitive": false
+            "caseSensitive": false,
+            "traditionalOnly": true
         },
         {
             "wrong": "獲取",
