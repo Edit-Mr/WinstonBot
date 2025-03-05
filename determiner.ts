@@ -1,15 +1,5 @@
-import { readFile } from "node:fs/promises";
 import { detectChineseType } from "./zhtw.ts";
-
-/**
- * 原始的拼寫檢查輸入
- */
-export interface SpellingRule {
-  wrong: string;
-  correct: string;
-  caseSensitive: boolean;
-  traditionalOnly?: boolean;
-}
+import type { SpellingCheckDatabase } from "./database.ts";
 
 /**
  * 拼寫錯誤的資訊
@@ -20,37 +10,24 @@ export interface SpellingMistake {
 }
 
 export class Determiner {
-  #rules: SpellingRule[];
+  #database: SpellingCheckDatabase;
 
-  constructor(rules: SpellingRule[]) {
-    this.#rules = rules;
-  }
-
-  /**
-   * Read rules from file
-   *
-   * @param {string} filePath
-   * @returns {Promise<Determiner>}
-   */
-  static async fromFile(filePath: string): Promise<Determiner> {
-    const rulesData = await readFile(filePath, "utf-8");
-
-    const parsedData: { rules: SpellingRule[] } = JSON.parse(rulesData);
-
-    return new Determiner(parsedData.rules);
+  constructor(database: SpellingCheckDatabase) {
+    this.#database = database;
   }
 
   /**
    * 檢查訊息內容中的拼寫錯誤
-   * @param {string} content 要檢查的訊息內容
-   * @returns {SpellingMistake[]} 找到的拼寫錯誤列表
+   * @param content 要檢查的訊息內容
+   * @returns 找到的拼寫錯誤列表
    */
-  checkSpelling(content: string): SpellingMistake[] {
+  async checkSpelling(content: string): Promise<SpellingMistake[]> {
+    const rules = await this.#database.getRules();
     const mistakes: SpellingMistake[] = [];
 
     const wordType = detectChineseType(content);
 
-    for (const check of this.#rules) {
+    for (const check of rules) {
       if (check.traditionalOnly && wordType === 'Simplified') {
         continue;
       }
