@@ -6,13 +6,6 @@ import { Client, Events, GatewayIntentBits } from "discord.js";
 import { config } from "dotenv";
 import { Determiner } from "./determiner";
 
-/**
- * 拼寫錯誤的資訊
- * @typedef {Object} SpellingMistake
- * @property {string} wrong 錯誤的拼寫
- * @property {string} correct 正確的拼寫
- */
-
 // 載入環境變數
 config();
 
