@@ -1,6 +1,7 @@
 import { Client, Events, GatewayIntentBits } from "discord.js";
 import { config } from "dotenv";
 import { Determiner } from "./determiner.ts";
+import { SpellingCheckDatabase } from "./database.ts";
 
 // 載入環境變數
 config();
@@ -14,14 +15,12 @@ const client = new Client({
     ],
 });
 
-console.log("正在載入規則檔案……");
-const determiner = await Determiner.fromFile("./rules.json").catch(err => {
-    console.error(err);
-    process.exit(1);
-}).then((determiner) => {
-    console.log("成功載入規則檔案");
-    return determiner;
-})
+const mongodbUri = process.env.MONGODB_URI;
+if (!mongodbUri) {
+    throw new Error("MONGODB_URI is not defined");
+}
+
+const database = await SpellingCheckDatabase.fromConnectionString(mongodbUri);
 
 // 當 bot 準備就緒時
 client.once(Events.ClientReady, async () => {
@@ -35,7 +34,9 @@ client.on(Events.MessageCreate, async message => {
     // 忽略 bot 的訊息
     if (message.author.bot) return;
     try {
-        const mistakes = determiner.checkSpelling(message.content);
+        const determiner = new Determiner(database);
+
+        const mistakes = await determiner.checkSpelling(message.content);
 
         if (mistakes.length > 0) {
             const response = mistakes
