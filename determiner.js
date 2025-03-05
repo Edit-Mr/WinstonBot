@@ -4,20 +4,12 @@ import { readFile } from "node:fs/promises";
 import { detectChineseType } from "./zhtw.js";
 
 /**
- * 用於拼寫檢查的規則項目
+ * 原始的拼寫檢查輸入
  * @typedef {Object} SpellingRule
  * @property {string} wrong 錯誤的拼寫
  * @property {string} correct 正確的拼寫
  * @property {boolean} caseSensitive 是否區分大小寫
- * @property {"Any" | "Traditional" | "Simplified"} ruleType 規則類型
- */
-
-/**
- * 原始的拼寫檢查輸入
- * @typedef {Object} RawSpellingRule
- * @property {string} wrong 錯誤的拼寫
- * @property {string} correct 正確的拼寫
- * @property {boolean} caseSensitive 是否區分大小寫
+ * @property {boolean} [traditionalOnly] 是否僅適用於繁體中文
  */
 
 /**
@@ -49,23 +41,10 @@ export class Determiner {
   static async fromFile(filePath) {
     const rulesData = await readFile(filePath, "utf-8");
 
-    /** @type {{rules: RawSpellingRule[]}} */
+    /** @type {{rules: SpellingRule[]}} */
     const parsedData = JSON.parse(rulesData);
 
-    /**
-     * @type {SpellingRule[]}
-     */
-    const processedSpellingRules = parsedData.rules.map((rule) => {
-      const ruleIsFor = detectChineseType(rule.wrong);
-      const ruleType = ruleIsFor === "Unknown" ? "Any" : ruleIsFor;
-
-      return {
-        ...rule,
-        ruleType,
-      };
-    });
-
-    return new Determiner(processedSpellingRules);
+    return new Determiner(parsedData.rules);
   }
 
   /**
@@ -80,15 +59,16 @@ export class Determiner {
     const wordType = detectChineseType(content);
 
     for (const check of this.#rules) {
+      if (check.traditionalOnly && wordType === 'Simplified') {
+        continue;
+      }
+
       const searchText = check.caseSensitive ? content : content.toLowerCase();
       const searchWord = check.caseSensitive
         ? check.wrong
         : check.wrong.toLowerCase();
 
-      if (
-        searchText.includes(searchWord) &&
-        (check.ruleType === wordType || check.ruleType === "Any")
-      ) {
+      if (searchText.includes(searchWord)) {
         mistakes.push({
           wrong: check.wrong,
           correct: check.correct,
