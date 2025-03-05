@@ -1,329 +1,74 @@
 {
-    "rules": [
-        {
-            "wrong": "iwatch",
-            "correct": "Apple Watch",
-            "caseSensitive": false
-        },
-        {
-            "wrong": "mac book",
-            "correct": "MacBook",
-            "caseSensitive": true
-        },
-        {
-            "wrong": "Macbook",
-            "correct": "MacBook",
-            "caseSensitive": true
-        },
-        {
-            "wrong": "mediaWiki",
-            "correct": "MediaWiki",
-            "caseSensitive": true
-        },
-        {
-            "wrong": "Mediawiki",
-            "correct": "MediaWiki",
-            "caseSensitive": true
-        },
-        {
-            "wrong": "qrcode",
-            "correct": "QR code",
-            "caseSensitive": false
-        },
-        {
-            "wrong": "Sitcon",
-            "correct": "SITCON",
-            "caseSensitive": true
-        },
-        {
-            "wrong": "wifi",
-            "correct": "Wi-Fi",
-            "caseSensitive": false
-        },
-        {
-            "wrong": "WikiData",
-            "correct": "Wikidata",
-            "caseSensitive": true
-        },
-        {
-            "wrong": "wikiData",
-            "correct": "Wikidata",
-            "caseSensitive": true
-        },
-        {
-            "wrong": "WikiMedia",
-            "correct": "Wikimedia",
-            "caseSensitive": true
-        },
-        {
-            "wrong": "賬號",
-            "correct": "帳號",
-            "caseSensitive": false
-        },
-        {
-            "wrong": "優惠卷",
-            "correct": "優惠券",
-            "caseSensitive": false
-        },
-        {
-            "wrong": "禮卷",
-            "correct": "禮券",
-            "caseSensitive": false
-        },
-        {
-            "wrong": "身份",
-            "correct": "身分",
-            "caseSensitive": false
-        },
-        {
-            "wrong": "身份證",
-            "correct": "身分證",
-            "caseSensitive": false
-        },
-        {
-            "wrong": "身份組",
-            "correct": "身分組",
-            "caseSensitive": false
-        },
-        {
-            "wrong": "鼠標",
-            "correct": "滑鼠",
-            "caseSensitive": false
-        },
-        {
-            "wrong": "光標",
-            "correct": "游標",
-            "caseSensitive": false
-        },
-        {
-            "wrong": "圖標",
-            "correct": "圖示",
-            "caseSensitive": false
-        },
-        {
-            "wrong": "緩存",
-            "correct": "快取",
-            "caseSensitive": false
-        },
-        {
-            "wrong": "封禁",
-            "correct": "封鎖",
-            "caseSensitive": false
-        },
-        {
-            "wrong": "數據庫",
-            "correct": "資料庫",
-            "caseSensitive": false
-        },
-        {
-            "wrong": "大數據",
-            "correct": "巨量資料",
-            "caseSensitive": false
-        },
-        {
-            "wrong": "模塊",
-            "correct": "模組",
-            "caseSensitive": false
-        },
-        {
-            "wrong": "運營",
-            "correct": "營運",
-            "caseSensitive": false
-        },
-        {
-            "wrong": "重命名",
-            "correct": "重新命名",
-            "caseSensitive": false
-        },
-        {
-            "wrong": "服務器",
-            "correct": "伺服器",
-            "caseSensitive": false
-        },
-        {
-            "wrong": "短視頻",
-            "correct": "短影音",
-            "caseSensitive": false
-        },
-        {
-            "wrong": "因該",
-            "correct": "應該",
-            "caseSensitive": false
-        },
-        {
-            "wrong": "半型",
-            "correct": "半形",
-            "caseSensitive": false
-        },
-        {
-            "wrong": "全型",
-            "correct": "全形",
-            "caseSensitive": false
-        },
-        {
-            "wrong": "示例",
-            "correct": "範例",
-            "caseSensitive": false
-        },
-        {
-            "wrong": "當前",
-            "correct": "目前",
-            "caseSensitive": false
-        },
-        {
-            "wrong": "內卷",
-            "correct": "內耗",
-            "caseSensitive": false
-        },
-        {
-            "wrong": "Chinese",
-            "correct": "Mandarin」/「Cantonese」/「Hokkien」/「……",
-            "caseSensitive": false
-        },
-        {
-            "wrong": "保存",
-            "correct": "儲存」/「保存",
-            "caseSensitive": false
-        },
-        {
-            "wrong": "質量",
-            "correct": "品質」/「質量",
-            "caseSensitive": false
-        },
-        {
-            "wrong": "文檔",
-            "correct": "文件」/「說明文件",
-            "caseSensitive": false
-        },
-        {
-            "wrong": "創建",
-            "correct": "建立」/「新增」/「創立",
-            "caseSensitive": false
-        },
-        {
-            "wrong": "訪問",
-            "correct": "存取」/「造訪」/「訪問",
-            "caseSensitive": false
-        },
-        {
-            "wrong": "舉報",
-            "correct": "檢舉」/「回報」/「舉發",
-            "caseSensitive": false
-        },
-        {
-            "wrong": "反饋",
-            "correct": "回饋」/「意見回饋」/「回授",
-            "caseSensitive": false
-        },
-        {
-            "wrong": "設備",
-            "correct": "裝置」/「設備",
-            "caseSensitive": false
-        },
-        {
-            "wrong": "禁用",
-            "correct": "停用」/「禁用",
-            "caseSensitive": false
-        },
-        {
-            "wrong": "擴展",
-            "correct": "擴充」/「擴充功能」/「擴充套件」/「拓展」/「延伸",
-            "caseSensitive": false
-        },
-        {
-            "wrong": "配置",
-            "correct": "設定」/「組態」/「配置",
-            "caseSensitive": false
-        },
-        {
-            "wrong": "數據",
-            "correct": "資料」/「數值",
-            "caseSensitive": false
-        },
-        {
-            "wrong": "數據分析",
-            "correct": "資料分析」/「數值分析",
-            "caseSensitive": false
-        },
-        {
-            "wrong": "默認",
-            "correct": "預設」/「預設值」/「默認",
-            "caseSensitive": false
-        },
-        {
-            "wrong": "字符",
-            "correct": "字元」/「字形」/「字符",
-            "caseSensitive": false
-        },
-        {
-            "wrong": "界面",
-            "correct": "介面」/「界面",
-            "caseSensitive": false
-        },
-        {
-            "wrong": "信息",
-            "correct": "資訊」/「訊息」/「消息」/「信息",
-            "caseSensitive": false
-        },
-        {
-            "wrong": "鏈接",
-            "correct": "連結」/「鏈結",
-            "caseSensitive": false
-        },
-        {
-            "wrong": "通過",
-            "correct": "透過」/「通過",
-            "caseSensitive": false
-        },
-        {
-            "wrong": "帖子",
-            "correct": "貼文」/「討論串",
-            "caseSensitive": false
-        },
-        {
-            "wrong": "視頻",
-            "correct": "影片」/「視頻",
-            "caseSensitive": false
-        },
-        {
-            "wrong": "短影片",
-            "correct": "短影音」/「短片",
-            "caseSensitive": false
-        },
-        {
-            "wrong": "優化",
-            "correct": "改善」/「改進」/「最佳化",
-            "caseSensitive": false
-        },
-        {
-            "wrong": "佈局",
-            "correct": "配置」/「布局",
-            "caseSensitive": false
-        },
-        {
-            "wrong": "獲取",
-            "correct": "取得」/「獲得",
-            "caseSensitive": false
-        },
-        {
-            "wrong": "智能",
-            "correct": "智慧」/「智力",
-            "caseSensitive": false
-        },
-        {
-            "wrong": "設置",
-            "correct": "設定」/「設置",
-            "caseSensitive": false
-        },
-        {
-            "wrong": "sitcon",
-            "correct": "SITCON",
-            "caseSensitive": true
-        },
-        {
-            "wrong": "卸載",
-            "correct": "解除安裝」／「卸載",
-            "caseSensitive": true
-        }
+    "case": [
+        "MacBook",
+        "MediaWiki",
+        "QR code",
+        "SITCON",
+        "Wi-Fi",
+        "Wikidata",
+        "Wikimedia",
+        "Git",
+        "GitHub",
+        "GitHub Actions"
+    ],
+    "proper": [
+        ["iwatch", "Apple Watch"],
+        ["qrcode", "QR code"],
+        ["wifi", "Wi-Fi"],
+        ["賬號", "帳號"],
+        ["優惠卷", "優惠券"],
+        ["禮卷", "禮券"],
+        ["身份", "身分"],
+        ["身份證", "身分證"],
+        ["身份組", "身分組"],
+        ["鼠標", "滑鼠"],
+        ["光標", "游標"],
+        ["圖標", "圖示"],
+        ["緩存", "快取"],
+        ["封禁", "封鎖"],
+        ["數據庫", "資料庫"],
+        ["大數據", "巨量資料"],
+        ["模塊", "模組"],
+        ["運營", "營運"],
+        ["重命名", "重新命名"],
+        ["服務器", "伺服器"],
+        ["短視頻", "短影音"],
+        ["因該", "應該"],
+        ["半型", "半形"],
+        ["全型", "全形"],
+        ["示例", "範例"],
+        ["當前", "目前"],
+        ["文檔", ["文件", "說明文件"]],
+        ["創建", ["建立", "新增", "創立"]],
+        ["內卷", "內耗"],
+        ["舉報", ["檢舉", "回報", "舉發"]],
+        ["反饋", ["回饋", "意見回饋", "回授"]],
+        ["擴展", ["擴充", "擴充功能", "擴充套件", "拓展", "延伸"]],
+        ["數據", ["資料", "數值"]],
+        ["數據分析", ["資料分析", "數值分析"]],
+        ["鏈接", ["連結", "鏈結"]],
+        ["帖子", ["貼文", "討論串"]],
+        ["視頻", ["影片", "視頻"]],
+        ["短影片", ["短影音", "短片"]],
+        ["優化", ["改善", "改進", "最佳化"]],
+        ["佈局", ["配置", "布局"]],
+        ["獲取", ["取得", "獲得"]],
+        ["智能", ["智慧", "智力"]]
+    ],
+    "warn": [
+        ["Chinese", ["Mandarin", "Cantonese", "Hokkien", "……"]],
+        ["保存", ["儲存"]],
+        ["質量", ["品質"]],
+        ["禁用", ["停用"]],
+        ["設備", ["裝置"]],
+        ["訪問", ["存取", "造訪"]],
+        ["配置", ["設定", "組態"]],
+        ["默認", ["預設", "預設值"]],
+        ["字符", ["字元", "字形"]],
+        ["界面", ["介面"]],
+        ["信息", ["資訊", "訊息", "消息"]],
+        ["通過", ["透過"]],
+        ["設置", ["設定"]],
+        ["卸載", ["解除安裝"]]
     ]
 }
