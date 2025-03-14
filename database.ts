@@ -1,5 +1,5 @@
 import mongoose, { type ObjectId } from "mongoose";
-import type { SpellingRule } from "./models.ts";
+import type { SpellingRule, SpellingRuleType } from "./models.ts";
 
 export class SpellingCheckDatabase {
     #rules: SpellingRule[] | null;
@@ -11,10 +11,10 @@ export class SpellingCheckDatabase {
     }
 
     static async fromConnectionString(connectionString: string): Promise<SpellingCheckDatabase> {
-      const db = await mongoose.connect(connectionString);
-      const collection = db.connection.collection<SpellingRule>("spelling_rules");
+        const db = await mongoose.connect(connectionString);
+        const collection = db.connection.collection<SpellingRule>("spelling_rules");
 
-      return new SpellingCheckDatabase(collection);
+        return new SpellingCheckDatabase(collection);
     }
 
     /**
@@ -29,6 +29,16 @@ export class SpellingCheckDatabase {
         }
 
         return this.#rules;
+    }
+
+    /**
+     * Get rules by type
+     * 
+     * @param type The type of rules to get
+     * @returns The rules of the specified type
+     */
+    async getRulesByType(type: SpellingRuleType): Promise<SpellingRule[]> {
+        return await this.#collection.find({ type }).toArray();
     }
 
     /**
@@ -47,20 +57,27 @@ export class SpellingCheckDatabase {
      * @param ruleId The ID of the rule to remove
      */
     async removeRule(ruleId: ObjectId): Promise<void> {
-        await this.#collection.deleteOne(ruleId);
+        await this.#collection.deleteOne({ _id: ruleId });
         this.invalidateCache();
     }
 
     /**
-     * Query a rule according to "wrong" (fuzzy search) from the database
+     * Query rules according to "wrong" (fuzzy search) from the database
      *
      * @param query The query to search
+     * @param type Optional type to filter the results
      * @returns The rules that match the query
      */
-    async queryRules(query: string): Promise<SpellingRule[]> {
-        return await this.#collection.find({
-            wrong: { $regex: query, $options: "i" },
-        }).toArray();
+    async queryRules(query: string, type?: SpellingRuleType): Promise<SpellingRule[]> {
+        const searchQuery: mongoose.mongo.Filter<SpellingRule> = {
+            wrong: { $regex: query, $options: "i" }
+        };
+
+        if (type) {
+            searchQuery.type = type;
+        }
+
+        return await this.#collection.find(searchQuery).toArray();
     }
 
     /**
