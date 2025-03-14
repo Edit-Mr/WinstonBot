@@ -50,13 +50,13 @@ export class Determiner {
             const searchText = sanitizedContent.toLowerCase();
             const searchWord = rule.wrong.toLowerCase();
 
-            if (searchText.includes(searchWord)) {
-                mistakes.push({
-                    wrong: rule.wrong,
-                    correct: rule.correct,
-                    type: rule.type
-                });
-            }
+            if (!searchText.includes(searchWord)) continue
+
+            mistakes.push({
+                wrong: rule.wrong,
+                correct: rule.correct,
+                type: rule.type
+            });
         }
 
         // 檢查大小寫規則
@@ -65,21 +65,26 @@ export class Determiner {
             const contentLower = sanitizedContent.toLowerCase();
 
             // 如果找到相同的字詞但大小寫不同
-            if (contentLower.includes(lowerTerm)) {
-                const regex = new RegExp(lowerTerm, 'gi');
-                const matches = sanitizedContent.match(regex);
+            if (!contentLower.includes(lowerTerm)) {
+                continue;
+            }
 
-                if (matches) {
-                    for (const match of matches) {
-                        if (match !== rule.term) {
-                            mistakes.push({
-                                wrong: match,
-                                correct: [rule.term],
-                                type: "case"
-                            });
-                        }
-                    }
+            const regex = new RegExp(lowerTerm, 'gi');
+            const matches = sanitizedContent.match(regex);
+            if (!matches) {
+                continue;
+            }
+
+            for (const match of matches) {
+                if (match === rule.term) {
+                    continue;
                 }
+
+                mistakes.push({
+                    wrong: match,
+                    correct: [rule.term],
+                    type: "case"
+                });
             }
         }
 
