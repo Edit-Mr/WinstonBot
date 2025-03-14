@@ -1,7 +1,7 @@
 import mongoose, { type ObjectId } from "mongoose";
-import type { SpellingRule, SpellingRuleType } from "./models.ts";
+import type { SpellingRule, CaseRule, SpellingRuleType } from "./models.ts";
 
-export class SpellingCheckDatabase {
+export class SpellingDatabase {
     #rules: SpellingRule[] | null;
     #collection: mongoose.Collection<SpellingRule>;
 
@@ -10,24 +10,21 @@ export class SpellingCheckDatabase {
         this.#rules = null;
     }
 
-    static async fromConnectionString(connectionString: string): Promise<SpellingCheckDatabase> {
+    static async fromConnectionString(connectionString: string): Promise<SpellingDatabase> {
         const db = await mongoose.connect(connectionString);
         const collection = db.connection.collection<SpellingRule>("spelling_rules");
-
-        return new SpellingCheckDatabase(collection);
+        return new SpellingDatabase(collection);
     }
 
     /**
-     * Get all rules from the database
+     * Get all spelling rules from the database
      *
-     * @returns The rules in the database
+     * @returns The spelling rules in the database
      */
     async getRules(): Promise<SpellingRule[]> {
-        // check if the rules have been loaded
         if (!this.#rules) {
             this.#rules = await this.#collection.find().toArray();
         }
-
         return this.#rules;
     }
 
@@ -42,7 +39,7 @@ export class SpellingCheckDatabase {
     }
 
     /**
-     * Add a rule to the database
+     * Add a spelling rule to the database
      *
      * @param rule The rule to add
      */
@@ -52,7 +49,7 @@ export class SpellingCheckDatabase {
     }
 
     /**
-     * Remove a rule from the database
+     * Remove a spelling rule from the database
      *
      * @param ruleId The ID of the rule to remove
      */
@@ -81,9 +78,76 @@ export class SpellingCheckDatabase {
     }
 
     /**
-     * Invalidate the cache
+     * Invalidate the spelling rules cache
      */
-    invalidateCache(): void {
+    private invalidateCache(): void {
+        this.#rules = null;
+    }
+}
+
+export class CaseDatabase {
+    #rules: CaseRule[] | null;
+    #collection: mongoose.Collection<CaseRule>;
+
+    constructor(collection: mongoose.Collection<CaseRule>) {
+        this.#collection = collection;
+        this.#rules = null;
+    }
+
+    static async fromConnectionString(connectionString: string): Promise<CaseDatabase> {
+        const db = await mongoose.connect(connectionString);
+        const collection = db.connection.collection<CaseRule>("case_rules");
+        return new CaseDatabase(collection);
+    }
+
+    /**
+     * Get all case rules from the database
+     * 
+     * @returns The case rules in the database
+     */
+    async getRules(): Promise<CaseRule[]> {
+        if (!this.#rules) {
+            this.#rules = await this.#collection.find().toArray();
+        }
+        return this.#rules;
+    }
+
+    /**
+     * Add a case rule to the database
+     * 
+     * @param term The term to add as a case rule
+     */
+    async addRule(term: string): Promise<void> {
+        await this.#collection.insertOne({ term });
+        this.invalidateCache();
+    }
+
+    /**
+     * Remove a case rule from the database
+     * 
+     * @param ruleId The ID of the rule to remove
+     */
+    async removeRule(ruleId: ObjectId): Promise<void> {
+        await this.#collection.deleteOne({ _id: ruleId });
+        this.invalidateCache();
+    }
+
+    /**
+     * Query case rules by term (fuzzy search)
+     * 
+     * @param query The query to search
+     * @returns The case rules that match the query
+     */
+    async queryRules(query: string): Promise<CaseRule[]> {
+        return await this.#collection.find({
+            term: { $regex: query, $options: "i" }
+        }).toArray();
+    }
+
+    /**
+     * Invalidate the case rules cache
+     */
+    private invalidateCache(): void {
         this.#rules = null;
     }
 }
