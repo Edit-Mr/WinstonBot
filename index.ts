@@ -44,7 +44,7 @@ client.on(Events.MessageCreate, async message => {
                     const correctTerms = mistake.correct.join("、");
                     switch (mistake.type) {
                         case "case":
-                            return `「${mistake.correct}」是專有名詞，請注意拼法及大小寫（你拼成 ${mistake.wrong}）。\n`;
+                            return `「${correctTerms}」是專有名詞，請注意拼法及大小寫（你拼成 ${mistake.wrong}）。\n`;
                         case "political_terminology":
                             return `「${mistake.wrong}」為含有政治色彩的中國用語，請改用「${correctTerms}」\n`;
                         case "regional_difference":
