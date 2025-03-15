@@ -11,7 +11,10 @@ config();
 const commands = [
     new SlashCommandBuilder()
         .setName("invalidate")
-        .setDescription("清除所有快取，從資料庫抓取資料。")
+        .setDescription("清除所有快取，從資料庫抓取資料。"),
+    new SlashCommandBuilder()
+        .setName("summary")
+        .setDescription("查看目前資料筆數。"),
 ];
 
 // 建立 client 實例
@@ -56,18 +59,27 @@ client.on(Events.InteractionCreate, async interaction => {
 
     const { commandName } = interaction;
 
-    if (commandName === "invalidate") {
-        try {
-            spellingDatabase.invalidateCache();
-            caseDatabase.invalidateCache();
-            await interaction.reply({ content: "已清除所有快取！", ephemeral: true });
-        } catch (error) {
-            console.error("清除快取時發生錯誤：", error);
-            await interaction.reply({ 
-                content: "清除快取時發生錯誤，請稍後再試。", 
-                ephemeral: true 
-            });
-        }
+    switch (commandName) {
+        case "invalidate":
+            try {
+                spellingDatabase.invalidateCache();
+                caseDatabase.invalidateCache();
+                await interaction.reply({ content: "已清除所有快取！", ephemeral: true });
+            } catch (error) {
+                console.error("清除快取時發生錯誤：", error);
+                await interaction.reply({
+                    content: "清除快取時發生錯誤，請稍後再試。",
+                    ephemeral: true
+                });
+            }
+            break;
+
+        case "summary":
+            const spellingCount = await spellingDatabase.getRules();
+            const caseCount = await caseDatabase.getRules();
+
+            await interaction.reply({ content: `目前有拼寫規則 ${spellingCount} 筆，大小寫規則 ${caseCount} 筆。`, ephemeral: true });
+            break;
     }
 });
 
