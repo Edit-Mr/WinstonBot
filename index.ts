@@ -39,8 +39,13 @@ const determiner = new Determiner(spellingDatabase, caseDatabase);
 client.once(Events.ClientReady, async (c) => {
     console.log(`Logged in as ${c.user.tag}`);
 
+    const discordToken = process.env.DISCORD_TOKEN;
+    if (!discordToken) {
+        throw new Error("DISCORD_TOKEN is not defined, so the bot cannot register slash commands.");
+    }
+
     // 註冊斜線指令
-    const rest = new REST();
+    const rest = new REST().setToken(discordToken);
     try {
         console.log("開始註冊斜線指令");
         await rest.put(
