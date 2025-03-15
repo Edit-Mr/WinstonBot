@@ -1,53 +1,35 @@
-/** @format */
-
-import { readFile } from "node:fs/promises";
 import { detectChineseType } from "./zhtw.ts";
-
-/**
- * 原始的拼寫檢查輸入
- */
-export interface SpellingRule {
-    wrong: string;
-    correct: string;
-    caseSensitive: boolean;
-    traditionalOnly?: boolean;
-}
+import type { CaseDatabase, SpellingDatabase } from "./database.ts";
+import { type SpellingRuleType } from "./models.ts";
 
 /**
  * 拼寫錯誤的資訊
  */
 export interface SpellingMistake {
     wrong: string;
-    correct: string;
+    correct: string[];
+    type: "case" | SpellingRuleType;
 }
 
 export class Determiner {
-    #rules: SpellingRule[];
+    #spellingDatabase: SpellingDatabase;
+    #caseDatabase: CaseDatabase;
 
-    constructor(rules: SpellingRule[]) {
-        this.#rules = rules;
-    }
-
-    /**
-     * Read rules from file
-     *
-     * @param {string} filePath
-     * @returns {Promise<Determiner>}
-     */
-    static async fromFile(filePath: string): Promise<Determiner> {
-        const rulesData = await readFile(filePath, "utf-8");
-
-        const parsedData: { rules: SpellingRule[] } = JSON.parse(rulesData);
-
-        return new Determiner(parsedData.rules);
+    constructor(spellingDatabase: SpellingDatabase, caseDatabase: CaseDatabase) {
+        this.#spellingDatabase = spellingDatabase;
+        this.#caseDatabase = caseDatabase;
     }
 
     /**
      * 檢查訊息內容中的拼寫錯誤
-     * @param {string} content 要檢查的訊息內容
-     * @returns {SpellingMistake[]} 找到的拼寫錯誤列表
+     * @param content 要檢查的訊息內容
+     * @returns 找到的拼寫錯誤列表
      */
-    checkSpelling(content: string): SpellingMistake[] {
+    async checkSpelling(content: string): Promise<SpellingMistake[]> {
+        const [rules, caseRules] = await Promise.all([
+            this.#spellingDatabase.getRules(),
+            this.#caseDatabase.getRules(),
+        ]);
         const mistakes: SpellingMistake[] = [];
 
         // 先排除 URL 和 @ 開頭的字詞
@@ -57,22 +39,51 @@ export class Determiner {
 
         const wordType = detectChineseType(sanitizedContent);
 
-        for (const check of this.#rules) {
-            if (check.traditionalOnly && wordType === "Simplified") {
+        // 檢查一般規則（proper 和 warn）
+        for (const rule of rules) {
+            // 如果是繁體字規則但內容是簡體字，則跳過
+            if (rule.traditionalOnly && wordType === 'Simplified') {
                 continue;
             }
 
-            const searchText = check.caseSensitive
-                ? sanitizedContent
-                : sanitizedContent.toLowerCase();
-            const searchWord = check.caseSensitive
-                ? check.wrong
-                : check.wrong.toLowerCase();
+            // 一般規則不區分大小寫
+            const searchText = sanitizedContent.toLowerCase();
+            const searchWord = rule.wrong.toLowerCase();
 
-            if (searchText.includes(searchWord)) {
+            if (!searchText.includes(searchWord)) continue
+
+            mistakes.push({
+                wrong: rule.wrong,
+                correct: rule.correct,
+                type: rule.type
+            });
+        }
+
+        // 檢查大小寫規則
+        for (const rule of caseRules) {
+            const lowerTerm = rule.term.toLowerCase();
+            const contentLower = sanitizedContent.toLowerCase();
+
+            // 如果找到相同的字詞但大小寫不同
+            if (!contentLower.includes(lowerTerm)) {
+                continue;
+            }
+
+            const regex = new RegExp(lowerTerm, 'gi');
+            const matches = sanitizedContent.match(regex);
+            if (!matches) {
+                continue;
+            }
+
+            for (const match of matches) {
+                if (match === rule.term) {
+                    continue;
+                }
+
                 mistakes.push({
-                    wrong: check.wrong,
-                    correct: check.correct,
+                    wrong: match,
+                    correct: [rule.term],
+                    type: "case"
                 });
             }
         }
