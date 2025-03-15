@@ -32,6 +32,8 @@ export class Determiner {
         ]);
         const mistakes: SpellingMistake[] = [];
 
+        console.log([rules, caseRules]);  // _debug_rules
+
         // 先排除 URL 和 @ 開頭的字詞
         const sanitizedContent = content
             .replace(/(https?:\/\/[^\s]+)/g, "") // URL
