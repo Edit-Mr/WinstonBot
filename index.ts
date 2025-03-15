@@ -80,8 +80,8 @@ client.on(Events.InteractionCreate, async interaction => {
             break;
 
         case "summary":
-            const spellingCount = await spellingDatabase.getRules();
-            const caseCount = await caseDatabase.getRules();
+            const spellingCount = (await spellingDatabase.getRules()).length;
+            const caseCount = (await caseDatabase.getRules()).length;
 
             await interaction.reply({ content: `目前有拼寫規則 ${spellingCount} 筆，大小寫規則 ${caseCount} 筆。`, ephemeral: true });
             break;
