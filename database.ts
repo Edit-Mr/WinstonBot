@@ -28,6 +28,10 @@ export class SpellingDatabase {
         return this.#rules;
     }
 
+    async getAllSpelling(): Promise<SpellingRule[]> {
+        return this.getRules();
+    }
+
     /**
      * Get rules by type
      * 
@@ -110,6 +114,16 @@ export class CaseDatabase {
             this.#rules = await this.#collection.find().toArray();
         }
         return this.#rules;
+    }
+
+    /**
+     * Get all case rules from the database
+     * This is an alias for getRules() used by the web API
+     * 
+     * @returns The case rules in the database
+     */
+    async getAllCases(): Promise<CaseRule[]> {
+        return this.getRules();
     }
 
     /**

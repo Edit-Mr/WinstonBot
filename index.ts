@@ -3,6 +3,7 @@ import { config } from "dotenv";
 import { Determiner } from "./determiner.ts";
 import { SpellingDatabase, CaseDatabase } from "./database.ts";
 import { REST, Routes, SlashCommandBuilder } from "discord.js";
+import { startWebServer } from "./web.ts";
 
 // 載入環境變數
 config();
@@ -125,6 +126,12 @@ client.on(Events.MessageCreate, async message => {
         console.error(err);
     }
 });
+
+// 啟動 Web 伺服器
+const webPort = process.env.WEB_PORT ? parseInt(process.env.WEB_PORT) : 3000;
+startWebServer(spellingDatabase, caseDatabase, webPort)
+    .then(() => console.log(`Web server started on port ${webPort}`))
+    .catch(err => console.error('Failed to start web server:', err));
 
 // 登入 bot
 client.login(process.env.DISCORD_TOKEN);

@@ -1,28 +1,90 @@
-# WinstonBot
+# WinstonBot - 文字檢查工具
 
-支語、錯字檢查 Discord Bot
+WinstonBot 是一個多功能的文字檢查工具，可以檢查拼寫錯誤、大小寫問題、政治色彩用語等。它提供了 Discord Bot 和網頁界面兩種使用方式。
+
+## 功能特點
+
+- 檢查拼寫錯誤
+- 檢查專有名詞大小寫
+- 識別政治色彩用語
+- 識別兩岸用語差異
+- 檢查詞彙混淆問題
+
+## 安裝與設定
+
+### 前置需求
+
+- Node.js 18 或更高版本
+- MongoDB 資料庫
+- Discord 開發者帳號（如果要使用 Discord Bot 功能）
+
+### 安裝步驟
+
+1. 複製專案
+   ```
+   git clone https://github.com/yourusername/winstonbot.git
+   cd winstonbot
+   ```
+
+2. 安裝依賴
+   ```
+   pnpm install
+   ```
+
+3. 設定環境變數
+   在專案根目錄建立 `.env` 檔案，並填入以下內容：
+   ```
+   DISCORD_TOKEN=你的Discord機器人Token
+   MONGODB_URI=你的MongoDB連線字串
+   WEB_PORT=3000
+   ```
 
 ## 使用方法
 
-[邀請我進你的伺服器吧！](https://discord.com/oauth2/authorize?client_id=1342364253486846032)
+### 啟動應用程式
 
-會自動檢查所有傳送的訊息，如果有支語或錯字會自動回覆。
+```
+pnpm start
+```
 
-> 「清了一下 docker 緩存突然有空間了」 -[EM](https://discord.com/channels/1259032762422136902/1259032897373999144/1346877622189035540)
+這將同時啟動 Discord Bot 和網頁伺服器。
 
-> 「~~《緩存》（✗）~~
-> 「快取」（✓）」 -[WinstonBot](https://discord.com/channels/1259032762422136902/1259032897373999144/1346877623544058000)
+### Discord Bot 使用方法
 
-> 「~~媽的傻逼機器人~~」-[PT](https://discord.com/channels/1259032762422136902/1259032897373999144/1347952752545890437)
+將 Bot 邀請到你的 Discord 伺服器後，它會自動檢查所有訊息中的拼寫錯誤和用詞問題。
 
-> 「幹你他媽可不可以不要亂加機器人？」 -[owen0924](https://discord.com/channels/1120284154957930588/1120284155578691676/1347239858199859220)
+#### 斜線指令
 
-> 「看來這臺共語檢查機器人還是挺有用的（）。」 -[Winston Sung](https://discord.com/channels/1259032762422136902/1259032897373999144/1345753777491283989)
-## 新增規則
+- `/invalidate` - 清除所有快取，從資料庫重新抓取資料
+- `/summary` - 查看目前資料庫中的規則筆數
 
-你可以在 [`rules.json`](rules.json) 資料夾中新增規則。如果有任何建議也歡迎提交 Pull Request。
+### 網頁界面使用方法
 
-## 開發
+1. 在瀏覽器中開啟 `http://localhost:3000`（或你設定的其他端口）
+2. 在文字框中輸入要檢查的文字
+3. 點擊「檢查」按鈕
+4. 查看檢查結果
+
+## 資料庫結構
+
+WinstonBot 使用 MongoDB 儲存兩種類型的規則：
+
+1. 拼寫規則 (SpellingRule)：
+   - 錯誤用詞
+   - 正確用詞
+   - 規則類型（政治色彩、兩岸用法、錯字、詞彙混淆）
+   - 是否僅適用於繁體中文
+
+2. 大小寫規則 (CaseRule)：
+   - 正確的大小寫形式
+
+## 開發與貢獻
+
+歡迎提交 Pull Request 或開 Issue 來改進這個專案！
+
+## 授權
+
+本專案採用 Apache 2.0 授權。
 
 ```bash
 git clone https://github.com/Edit-Mr/WinstonBot.git
