@@ -80,7 +80,7 @@ export class SpellingDatabase {
     /**
      * Invalidate the spelling rules cache
      */
-    private invalidateCache(): void {
+    invalidateCache(): void {
         this.#rules = null;
     }
 }
@@ -147,7 +147,7 @@ export class CaseDatabase {
     /**
      * Invalidate the case rules cache
      */
-    private invalidateCache(): void {
+    invalidateCache(): void {
         this.#rules = null;
     }
 }
