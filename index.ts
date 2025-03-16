@@ -104,17 +104,17 @@ client.on(Events.MessageCreate, async message => {
                     const correctTerms = mistake.correct.join("、");
                     switch (mistake.type) {
                         case "case":
-                            return `「${correctTerms}」是專有名詞，請注意拼法及大小寫（你拼成 ${mistake.wrong}）。\n`;
+                            return `「${correctTerms}」啦！專有名詞請注意拼法及大小寫（你拼成 ${mistake.wrong}）。\n`;
                         case "political_terminology":
-                            return `「${mistake.wrong}」為含有政治色彩的中國用語，請改用「${correctTerms}」\n`;
+                            return `「${mistake.wrong}」是含有政治色彩的中國用語，請考慮改用「${correctTerms}」\n`;
                         case "regional_difference":
-                            return `「${mistake.wrong}」為兩岸用法不同的中國用語，台灣用語是「${correctTerms}」\n`;
+                            return `「《${mistake.wrong}》（✗）\n「${correctTerms}」（✓）\n`;
                         case "spelling_correction":
-                            return `錯字，「${mistake.wrong}」應寫成「${correctTerms}」\n`;
+                            return `你國小老師要哭了，「${mistake.wrong}」應寫成「${correctTerms}」\n`;
                         case "term_ambiguity_check":
                             return `你確定你想說的是「${mistake.wrong}」而不是「${correctTerms}」嗎？\n`;
                         default:
-                            return `「${mistake.wrong}」應改為「${correctTerms}」\n`;
+                            return `「《${mistake.wrong}》（✗）\n「${correctTerms}」（✓）\n`;
                     }
                 })
                 .join("");
