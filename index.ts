@@ -128,7 +128,7 @@ client.on(Events.MessageCreate, async message => {
 });
 
 // 啟動 Web 伺服器
-const webPort = process.env.WEB_PORT ? parseInt(process.env.WEB_PORT) : 3000;
+const webPort = process.env.WEB_PORT ? parseInt(process.env.WEB_PORT, 10) || 3000 : 3000;
 startWebServer(spellingDatabase, caseDatabase, webPort)
     .then(() => console.log(`Web server started on port ${webPort}`))
     .catch(err => console.error('Failed to start web server:', err));
