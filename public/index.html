@@ -23,7 +23,7 @@
                 text-align: center;
                 margin-bottom: 30px;
             }
-            .container {
+            main {
                 background-color: white;
                 border-radius: 8px;
                 padding: 20px;
@@ -102,6 +102,14 @@
                 display: inline-block;
             }
 
+            a {
+                color: #3498db;
+                text-decoration: none;
+            }
+            section {
+                margin-top: 20px;
+            }
+
             footer {
                 text-align: center;
                 margin-top: 20px;
@@ -126,12 +134,16 @@
                     transform: rotate(360deg);
                 }
             }
+
+            li {
+                margin-bottom: 10px;
+            }
         </style>
     </head>
     <body>
-        <div class="container">
+        <main>
             <h1>Winston Bot - 中國用語／錯字檢查工具</h1>
-            <p>輸入文字，檢查拼寫、大小寫和用詞問題：</p>
+            <p>輸入文字，檢查常見錯字、中國用語、以及專有名詞的拼寫與大小寫是否正確。</p>
 
             <textarea id="textInput" placeholder="請輸入要檢查的文字...">
 一位程序員在掃描 qrcode 報到 sitcon 之後用 Chinese 改了一下進程並推送到 github</textarea
@@ -149,17 +161,52 @@
                     </button>
                 </div>
             </div>
-
             <div class="loading" id="loading">
                 <div class="spinner"></div>
                 <p>檢查中...</p>
             </div>
-
             <div id="result"></div>
-        </div>
+            <section>
+                <h2>為什麼要當支語警察？</h2>
+                <p>
+                    簡單來說：
+                </p>
+                <ul>
+                    <li>這些是錯字，寫報告、學習歷程檔案、論文、網站時要盡量避免。</li>
+                    <li>Threads 上面的支語警察會罵你共匪。</li>
+                    <li>可以拿來判斷是否是 AI 生成，或是詐騙文案。</li>
+                </ul>
+                <p>簡體中文是以廢除中文為前提的產物，有意圖、組織性地入侵台灣（如有不肖對岸人士運用國教院雙語辭書網的修改提議系統，有意地將其內容改為中國用語）。有些人覺得語言變化應該是自由的，不應該由少數自稱專業人士四處教育人們「應該怎麼講話」，但正因為我們想保有自由發展的語言，才必須辨識、排除有意妨礙我們的語言自由發展的用法。</p>
+                <p>
+                    根據職業譯者Cr氏於系列<a href="https://www.thenewslens.com/column/366days/198935"
+                        >「沒有中國用語的一年」</a
+                    >的統計，中國用語可以簡單分為以下幾種：
+                </p>
+                <ul>
+                    <li>
+                        <strong>具共產黨色彩：</strong>如「很紅」在中國會用「很火」，因為「紅」是中國共產黨的象徵。或著是涉及中共教育當局律定的音譯規則，如「史達林」在對岸稱為「斯大林」。
+                    </li>
+                    <li><strong>因文化與歷史因素而不同：</strong>如台灣科技比較早發展經歷過錄影帶的時代，因此會用「倒帶」與「快轉」，但直接進入電腦時代的中國則是使用「快退」與「快進」。</li>
+                    <li>
+                        <strong>中國南北省籍、方言或地區性差異者：</strong>這種差異非出自兩岸政治邊界。就像我們平常打字有時候會打閩南的用語語法，或是「媳婦」這種不同地區意思不同的詞。
+                    </li>
+                    <li>
+                        <strong>都會這樣講，但使用頻率不同：</strong>如臺灣人大多使用「澳洲」，對岸則幾乎只使用「澳大利亞」，但中華民國外交部網站上是兩個都有列出的。
+                    </li>
+                    <li>
+                        <strong>中國用法才是「原有」用法的狀況：</strong>台灣教育部。你懂的。還有就是隨著時代的變化，如民國初期的「于是」現在大家習慣用「於是」。
+                    </li>
+                </ul>
+                <p>
+                    這裡會檢查具共產黨色彩、以及因文化與歷史因素而不同的中國用語。同時也會幫你檢查常見的中文錯字（如身份證其實是身分證），以及專有名詞的拼寫與大小寫是否正確（如 google doc 其實是 Google Docs）。如果有任何擴充建議歡迎到 <a href="https://github.com/Edit-Mr/WinstonBot/issues">GitHub Issue</a> 提出。
+                </p>
+            </section>
+        </main>
         <footer>
             Made with 😡 by <a href="https://github.com/Edit-Mr">Elvis Mao</a>,
-            <a href="https://github.com/pan93412">Pan</a>, <a href="https://github.com/winstonsung">Winston Sung</a>, and <a href="https://github.com/rileychh">Riley</a>
+            <a href="https://github.com/pan93412">Pan</a>,
+            <a href="https://github.com/winstonsung">Winston Sung</a>, and
+            <a href="https://github.com/rileychh">Riley</a>
             <br />
             <a href="https://github.com/Edit-Mr/WinstonBot">View on GitHub</a>
         </footer>
