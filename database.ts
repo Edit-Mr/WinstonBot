@@ -28,6 +28,12 @@ export class SpellingDatabase {
         return this.#rules;
     }
 
+    /**
+     * Get all spelling rules from the database
+     * This is an alias for getRules() used by the web API
+     * 
+     * @returns The spelling rules in the database
+     */
     async getAllSpelling(): Promise<SpellingRule[]> {
         return this.getRules();
     }
