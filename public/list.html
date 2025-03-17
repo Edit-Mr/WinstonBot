@@ -1,3 +1,5 @@
+<!-- @format -->
+
 <!DOCTYPE html>
 <html lang="zh-TW">
     <head>
@@ -45,14 +47,31 @@
                 border-radius: 4px;
                 margin: 0;
             }
-
         </style>
+        <!-- Google tag (gtag.js) -->
+        <script
+            async
+            src="https://www.googletagmanager.com/gtag/js?id=G-H69XEEC798"
+        ></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag() {
+                dataLayer.push(arguments);
+            }
+            gtag("js", new Date());
+
+            gtag("config", "G-H69XEEC798");
+        </script>
     </head>
     <body>
         <div class="container">
             <a class="back-button" href="/">< 回到首頁</a>
             <h1>支援列表</h1>
-            <p>以下是所有 Winston Bot 支援的錯誤用語。API 為 <a href="/api/list"><code>/api/list</code></a>，可自行使用。</p>
+            <p>
+                以下是所有 Winston Bot 支援的錯誤用語。API 為
+                <a href="/api/list"><code>/api/list</code></a
+                >，可自行使用。
+            </p>
             <h2>拼字檢查</h2>
             <ul id="spellingList"></ul>
             <h2>用詞檢查</h2>
@@ -62,66 +81,70 @@
             document.addEventListener("DOMContentLoaded", () => {
                 const supportList = document.getElementById("supportList");
                 const spellingList = document.getElementById("spellingList");
-                
+
                 fetch("/api/list")
-                    .then((response) => response.json())
-                    .then((data) => {
+                    .then(response => response.json())
+                    .then(data => {
                         // Handle case rules
-                        data.cases.forEach((item) => {
+                        data.cases.forEach(item => {
                             const listItem = document.createElement("li");
                             listItem.textContent = item.term;
                             spellingList.appendChild(listItem);
                         });
-                        
+
                         // Group spelling rules by type
                         const typeGroups = {};
                         const typeNames = {
-                            "political_terminology": "政治色彩用語",
-                            "regional_difference": "兩岸用法差異",
-                            "spelling_correction": "拼寫錯誤",
-                            "term_ambiguity_check": "詞彙混淆問題"
+                            political_terminology: "政治色彩用語",
+                            regional_difference: "兩岸用法差異",
+                            spelling_correction: "拼寫錯誤",
+                            term_ambiguity_check: "詞彙混淆問題",
                         };
                         // Define the desired order of types
                         const typeOrder = [
                             "term_ambiguity_check",
-                            "political_terminology", 
+                            "political_terminology",
                             "regional_difference",
-                            "spelling_correction"
+                            "spelling_correction",
                         ];
                         // Sort items by type
-                        data.spelling.forEach((item) => {
+                        data.spelling.forEach(item => {
                             if (!typeGroups[item.type]) {
                                 typeGroups[item.type] = [];
                             }
                             typeGroups[item.type].push(item);
                         });
-                        
+
                         // Create sections for each type
-                        typeOrder.forEach((type) => {
+                        typeOrder.forEach(type => {
                             if (typeGroups[type]) {
-                                const typeSection = document.createElement("div");
+                                const typeSection =
+                                    document.createElement("div");
                                 typeSection.className = "type-section";
-                            
-                            const typeTitle = document.createElement("h3");
-                            typeTitle.className = "type-title";
-                            typeTitle.textContent = typeNames[type] || type;
-                            typeSection.appendChild(typeTitle);
-                            
-                            const typeList = document.createElement("ul");
-                            
-                            // Add items to the type list
-                            typeGroups[type].forEach((item) => {
-                                const listItem = document.createElement("li");
-                                listItem.textContent = `❌ ${item.wrong} → ✅ ${item.correct.join(", ")}`;
-                                typeList.appendChild(listItem);
-                            });
-                                
+
+                                const typeTitle = document.createElement("h3");
+                                typeTitle.className = "type-title";
+                                typeTitle.textContent = typeNames[type] || type;
+                                typeSection.appendChild(typeTitle);
+
+                                const typeList = document.createElement("ul");
+
+                                // Add items to the type list
+                                typeGroups[type].forEach(item => {
+                                    const listItem =
+                                        document.createElement("li");
+                                    listItem.textContent = `❌ ${
+                                        item.wrong
+                                    } → ✅ ${item.correct.join(", ")}`;
+                                    typeList.appendChild(listItem);
+                                });
+
                                 typeSection.appendChild(typeList);
                                 supportList.appendChild(typeSection);
                             }
                         });
                     })
-                    .catch((error) => {
+                    .catch(error => {
                         console.error("Error fetching support list:", error);
                     });
             });
