@@ -69,9 +69,23 @@ export class Determiner {
                 continue;
             }
 
-            // 找出所有被反引號包圍的文字
+            // 找出所有被反引號包圍的文字（包括單行和多行）
             const backtickMatches = sanitizedContent.match(/`[^`]+`/g) || [];
-            const backtickTexts = backtickMatches.map(match => match.slice(1, -1).toLowerCase());
+            const tripleBacktickMatches = sanitizedContent.match(/```[\s\S]+?```/g) || [];
+            
+            // 處理單行反引號
+            const singleBacktickTexts = backtickMatches.map(match => match.slice(1, -1).toLowerCase());
+            
+            // 處理多行反引號，移除語言標記（如果有的話）
+            const tripleBacktickTexts = tripleBacktickMatches.map(match => {
+                const content = match.slice(3, -3); // 移除前後的 ```
+                const firstLine = content.split('\n')[0].trim();
+                // 如果第一行是語言標記，移除它
+                const text = firstLine.match(/^[a-zA-Z0-9]+$/) ? content.split('\n').slice(1).join('\n') : content;
+                return text.toLowerCase();
+            });
+
+            const backtickTexts = [...singleBacktickTexts, ...tripleBacktickTexts];
 
             const regex = new RegExp(lowerTerm, 'gi');
             const matches = sanitizedContent.match(regex);
@@ -81,7 +95,7 @@ export class Determiner {
 
             for (const match of matches) {
                 // 如果匹配的文字在反引號內，跳過大小寫檢查
-                if (backtickTexts.includes(match.toLowerCase())) {
+                if (backtickTexts.some(text => text.includes(match.toLowerCase()))) {
                     continue;
                 }
 
