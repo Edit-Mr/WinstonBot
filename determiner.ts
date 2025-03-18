@@ -69,6 +69,10 @@ export class Determiner {
                 continue;
             }
 
+            // 找出所有被反引號包圍的文字
+            const backtickMatches = sanitizedContent.match(/`[^`]+`/g) || [];
+            const backtickTexts = backtickMatches.map(match => match.slice(1, -1).toLowerCase());
+
             const regex = new RegExp(lowerTerm, 'gi');
             const matches = sanitizedContent.match(regex);
             if (!matches) {
@@ -76,6 +80,11 @@ export class Determiner {
             }
 
             for (const match of matches) {
+                // 如果匹配的文字在反引號內，跳過大小寫檢查
+                if (backtickTexts.includes(match.toLowerCase())) {
+                    continue;
+                }
+
                 if (match === rule.term) {
                     continue;
                 }
