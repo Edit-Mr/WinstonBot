@@ -9,6 +9,7 @@ export interface SpellingMistake {
     wrong: string;
     correct: string[];
     type: "case" | SpellingRuleType;
+    traditionalOnly?: boolean;
 }
 
 export class Determiner {
@@ -50,12 +51,15 @@ export class Determiner {
             const searchText = sanitizedContent.toLowerCase();
             const searchWord = rule.wrong.toLowerCase();
 
-            if (!searchText.includes(searchWord)) continue
+            // 使用正則表達式檢查完整單詞
+            const wordRegex = new RegExp(`\\b${searchWord}\\b`, 'i');
+            if (!wordRegex.test(searchText)) continue;
 
             mistakes.push({
                 wrong: rule.wrong,
                 correct: rule.correct,
-                type: rule.type
+                type: rule.type,
+                traditionalOnly: rule.traditionalOnly
             });
         }
 
