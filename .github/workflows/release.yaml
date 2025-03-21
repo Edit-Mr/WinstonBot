@@ -26,7 +26,7 @@ jobs:
           echo "Latest release: $latest_release"
           
           # Download the latest release asset
-          gh release download "$latest_release" -p "*.json" -O current_data.json || {
+          gh release download "$latest_release" -p "*.json" -O current_data.json --clobber || {
             echo "Failed to download latest release asset"
             exit 1
           }
