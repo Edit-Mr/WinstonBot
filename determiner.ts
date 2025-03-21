@@ -34,7 +34,7 @@ export class Determiner {
         const mistakes: SpellingMistake[] = [];
 
         // 先排除 URL 和 @ 開頭的字詞
-        const sanitizedContent = content
+        let sanitizedContent = content
             .replace(/(https?:\/\/[^\s]+)/g, "") // URL
             .replace(/@[a-zA-Z0-9_]+/g, ""); // @ 開頭的字詞
 
@@ -46,14 +46,18 @@ export class Determiner {
             if (rule.traditionalOnly && wordType === 'Simplified') {
                 continue;
             }
-
             // 一般規則不區分大小寫
             const searchText = sanitizedContent.toLowerCase();
             const searchWord = rule.wrong.toLowerCase();
 
-            // 使用正則表達式檢查完整單詞
-            const wordRegex = new RegExp(`\\b${searchWord}\\b`, 'i');
-            if (!wordRegex.test(searchText)) continue;
+            // For Chinese characters, we don't need word boundaries
+            const isChinese = /[\u4e00-\u9fa5]/.test(searchWord);
+            const wordRegex = isChinese 
+                ? new RegExp(searchWord, 'i')
+                : new RegExp(`\\b${searchWord}\\b`, 'i');
+
+            if (!wordRegex.test(searchText))
+                continue;
 
             mistakes.push({
                 wrong: rule.wrong,
@@ -107,11 +111,23 @@ export class Determiner {
                     continue;
                 }
 
-                mistakes.push({
-                    wrong: match,
-                    correct: [rule.term],
-                    type: "case"
-                });
+                // Get the characters before and after the match
+                const matchIndex = sanitizedContent.indexOf(match);
+                const charBefore = matchIndex > 0 ? sanitizedContent[matchIndex - 1] : '';
+                const charAfter = matchIndex + match.length < sanitizedContent.length ? 
+                    sanitizedContent[matchIndex + match.length] : '';
+
+                // Skip if there are English letters before or after
+                if (!/[A-Za-z]/.test(charBefore) && !/[A-Za-z]/.test(charAfter)) {
+                    mistakes.push({
+                        wrong: match,
+                        correct: [rule.term],
+                        type: "case"
+                    });
+                }
+
+                sanitizedContent = sanitizedContent.replace(match, rule.term);
+                
             }
         }
 
