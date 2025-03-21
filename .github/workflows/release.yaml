@@ -36,12 +36,19 @@ jobs:
         shell: bash
         run: |
           if [ -f current_data.json ]; then
-            if [ "$(jq '.cases | length' current_data.json)" -ne "$(jq '.cases | length' latest_json.json)" ]; then
-              echo "Current data has a different number of cases than the latest release."
+            # Sort and normalize both JSON files to ensure consistent comparison
+            jq -S '.' current_data.json > current_sorted.json
+            jq -S '.' latest_json.json > latest_sorted.json
+            
+            if ! cmp -s current_sorted.json latest_sorted.json; then
+              echo "Changes detected between current data and the latest release."
               gh release create v$(date +%Y-%m-%d) current_data.json --title "API Update $(date +%Y-%m-%d)" --notes "Automated API data update for $(date +%Y-%m-%d)"
             else
-              echo "Current data matches the latest release."
+              echo "Current data matches the latest release exactly."
             fi
+            
+            # Clean up temporary files
+            rm current_sorted.json latest_sorted.json
           else
             echo "current_data.json does not exist."
             exit 1
