@@ -26,6 +26,8 @@ jobs:
           echo "Latest release: $latest_release"
 
       - name: Compare current data with latest release
+        env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         shell: bash
         run: |
           if [ -f current_data.json ]; then
@@ -38,4 +40,4 @@ jobs:
           else
             echo "current_data.json does not exist."
             exit 1
-      
+          fi
