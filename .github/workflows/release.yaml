@@ -24,13 +24,23 @@ jobs:
         run: |
           latest_release=$(gh release list --json name --limit 1 | jq -r '.[] | .name')
           echo "Latest release: $latest_release"
+          
+          # Download the latest release asset
+          gh release download "$latest_release" -p "*.json" -O current_data.json || {
+            echo "Failed to download latest release asset"
+            exit 1
+          }
       - name: Compare current data with latest release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         shell: bash
         run: |
           if [ -f current_data.json ]; then
-            if [ "$(jq '.cases | length' current_data.json)" -ne "$(jq '.cases | length' latest_release.json)" ]; then
+            latest_json=$(ls -t *.json | grep -v "current_data.json" | head -1)
+            if [ -z "$latest_json" ]; then
+              echo "No previous release JSON found."
+              gh release create v$(date +%Y-%m-%d) current_data.json --title "API Update $(date +%Y-%m-%d)" --notes "Automated API data update for $(date +%Y-%m-%d)"
+            elif [ "$(jq '.cases | length' current_data.json)" -ne "$(jq '.cases | length' "$latest_json")" ]; then
               echo "Current data has a different number of cases than the latest release."
               gh release create v$(date +%Y-%m-%d) current_data.json --title "API Update $(date +%Y-%m-%d)" --notes "Automated API data update for $(date +%Y-%m-%d)"
             else
