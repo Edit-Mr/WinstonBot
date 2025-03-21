@@ -2,7 +2,7 @@ name: Monthly API Check and Release
 
 on:
   schedule:
-    - cron: '0 0 1 * *'
+    - cron: "0 0 1 * *"
   workflow_dispatch:
 
 jobs:
@@ -24,10 +24,9 @@ jobs:
         run: |
           latest_release=$(gh release list --json name --limit 1 | jq -r '.[] | .name')
           echo "Latest release: $latest_release"
-
       - name: Compare current data with latest release
         env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         shell: bash
         run: |
           if [ -f current_data.json ]; then
