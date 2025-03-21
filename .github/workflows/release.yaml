@@ -1,0 +1,41 @@
+name: Monthly API Check and Release
+
+on:
+  schedule:
+    - cron: '0 0 1 * *'
+  workflow_dispatch:
+
+jobs:
+  check-and-release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Curl current data
+        run: |
+          curl -o current_data.json https://winston.emtech.cc/api/list
+      - name: get the latest release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        shell: bash
+        run: |
+          latest_release=$(gh release list --json name --limit 1 | jq -r '.[] | .name')
+          echo "Latest release: $latest_release"
+
+      - name: Compare current data with latest release
+        shell: bash
+        run: |
+          if [ -f current_data.json ]; then
+            if [ "$(jq '.cases | length' current_data.json)" -ne "$(jq '.cases | length' latest_release.json)" ]; then
+              echo "Current data has a different number of cases than the latest release."
+              gh release create v$(date +%Y-%m-%d) current_data.json --title "API Update $(date +%Y-%m-%d)" --notes "Automated API data update for $(date +%Y-%m-%d)"
+            else
+              echo "Current data matches the latest release."
+            fi
+          else
+            echo "current_data.json does not exist."
+            exit 1
+      
