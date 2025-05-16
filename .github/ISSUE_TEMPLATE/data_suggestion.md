@@ -6,21 +6,23 @@ labels: data
 assignees: ''
 ---
 
-**Type of Suggestion**
-Please select the type of data suggestion:
+**資料類型**
+
+請選擇資料建議的類型：
+
 - [ ] 政治色彩用語 (Political Terminology)
 - [ ] 兩岸用法差異 (Regional Differences)
 - [ ] 拼寫錯誤 (Spelling Correction)
 - [ ] 詞彙混淆問題 (Term Ambiguity)
 
-**Current Data**
+**目前的資料**
 
 - [ ] 這是一筆新資料
 
 請提供需要改進或修正的資料或詞彙：
 
 ```
-[貼上目前的資料]
+
 ```
 
 **建議改進**
@@ -28,7 +30,7 @@ Please select the type of data suggestion:
 請提供你的建議或修正：
 
 ```
-[貼上你的建議或修正]
+
 ```
 
 **參考資料**
