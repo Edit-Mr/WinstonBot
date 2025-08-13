@@ -1,4 +1,4 @@
-import { detectChineseType } from "./zhtw.ts";
+import { detectChineseType } from "./zhhanttw.ts";
 import type { CaseDatabase, SpellingDatabase } from "./database.ts";
 import { type SpellingRuleType } from "./models.ts";
 
