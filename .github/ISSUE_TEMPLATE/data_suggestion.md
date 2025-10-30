@@ -1,9 +1,9 @@
 ---
 name: 資料建議 Data Suggestion
 about: 提出資料改進或修正的建議
-title: '[DATA] '
+title: "[DATA] "
 labels: data
-assignees: ''
+assignees: ""
 ---
 
 **資料類型**

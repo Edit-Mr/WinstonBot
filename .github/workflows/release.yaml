@@ -24,7 +24,7 @@ jobs:
         run: |
           latest_release=$(gh release list --json name --limit 1 | jq -r '.[] | .name')
           echo "Latest release: $latest_release"
-          
+
           # Download the latest release asset
           gh release download "$latest_release" -p "*.json" -O latest_json.json --clobber || {
             echo "Failed to download latest release asset"

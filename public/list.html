@@ -1,158 +1,168 @@
 <!-- @format -->
 
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-TW">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>支援列表 - Winston Bot</title>
-        <meta
-            name="description"
-            content="檢查常見中英文錯字、繁體漢字中國大陸用語、以及專有名詞的拼寫與大小寫是否正確。"
-        />
-        <meta name="author" content="Elvis Mao, Pan, Winston Sung, Riley" />
-        <style>
-            body {
-                font-family: system-ui, -apple-system, BlinkMacSystemFont,
-                    "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans",
-                    "Helvetica Neue", sans-serif;
-                line-height: 1.6;
-            }
-            .container {
-                max-width: 800px;
-                margin: 0 auto;
-                padding: 20px;
-            }
-            a.back-button {
-                text-decoration: none;
-                color: #000;
-            }
-            .type-section {
-                margin-bottom: 30px;
-            }
-            .type-title {
-                background-color: #f5f5f5;
-                padding: 8px 15px;
-                border-radius: 4px;
-                margin-bottom: 10px;
-            }
-            li {
-                margin-bottom: 10px;
-            }
-            ul {
-                display: grid;
-                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-                gap: 10px;
-                padding: 0;
-                list-style: none;
-            }
-            li {
-                padding: 8px;
-                background: #f9f9f9;
-                border-radius: 4px;
-                margin: 0;
-            }
-        </style>
-        <!-- Google tag (gtag.js) -->
-        <script
-            async
-            src="https://www.googletagmanager.com/gtag/js?id=G-H69XEEC798"
-        ></script>
-        <script>
-            window.dataLayer = window.dataLayer || [];
-            function gtag() {
-                dataLayer.push(arguments);
-            }
-            gtag("js", new Date());
+	<head>
+		<meta charset="UTF-8" />
+		<meta
+			name="viewport"
+			content="width=device-width, initial-scale=1.0"
+		/>
+		<title>支援列表 - Winston Bot</title>
+		<meta
+			name="description"
+			content="檢查常見中英文錯字、繁體漢字中國大陸用語、以及專有名詞的拼寫與大小寫是否正確。"
+		/>
+		<meta
+			name="author"
+			content="Elvis Mao, Pan, Winston Sung, Riley"
+		/>
+		<style>
+			body {
+				font-family:
+					system-ui,
+					-apple-system,
+					BlinkMacSystemFont,
+					"Segoe UI",
+					Roboto,
+					Oxygen,
+					Ubuntu,
+					Cantarell,
+					"Open Sans",
+					"Helvetica Neue",
+					sans-serif;
+				line-height: 1.6;
+			}
+			.container {
+				max-width: 800px;
+				margin: 0 auto;
+				padding: 20px;
+			}
+			a.back-button {
+				text-decoration: none;
+				color: #000;
+			}
+			.type-section {
+				margin-bottom: 30px;
+			}
+			.type-title {
+				background-color: #f5f5f5;
+				padding: 8px 15px;
+				border-radius: 4px;
+				margin-bottom: 10px;
+			}
+			li {
+				margin-bottom: 10px;
+			}
+			ul {
+				display: grid;
+				grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+				gap: 10px;
+				padding: 0;
+				list-style: none;
+			}
+			li {
+				padding: 8px;
+				background: #f9f9f9;
+				border-radius: 4px;
+				margin: 0;
+			}
+		</style>
+		<!-- Google tag (gtag.js) -->
+		<script
+			async
+			src="https://www.googletagmanager.com/gtag/js?id=G-H69XEEC798"
+		></script>
+		<script>
+			window.dataLayer = window.dataLayer || [];
+			function gtag() {
+				dataLayer.push(arguments);
+			}
+			gtag("js", new Date());
 
-            gtag("config", "G-H69XEEC798");
-        </script>
-    </head>
-    <body>
-        <div class="container">
-            <a class="back-button" href="/">< 回到首頁</a>
-            <h1>支援列表</h1>
-            <p>
-                以下是所有 Winston Bot 支援的錯誤用語。API 為
-                <a href="/api/list"><code>/api/list</code></a
-                >，可自行使用。
-            </p>
-            <h2>拼字檢查</h2>
-            <ul id="spellingList"></ul>
-            <h2>用詞檢查</h2>
-            <div id="supportList"></div>
-        </div>
-        <script>
-            document.addEventListener("DOMContentLoaded", () => {
-                const supportList = document.getElementById("supportList");
-                const spellingList = document.getElementById("spellingList");
+			gtag("config", "G-H69XEEC798");
+		</script>
+	</head>
+	<body>
+		<div class="container">
+			<a
+				class="back-button"
+				href="/"
+				>< 回到首頁</a
+			>
+			<h1>支援列表</h1>
+			<p>
+				以下是所有 Winston Bot 支援的錯誤用語。API 為
+				<a href="/api/list"><code>/api/list</code></a
+				>，可自行使用。
+			</p>
+			<h2>拼字檢查</h2>
+			<ul id="spellingList"></ul>
+			<h2>用詞檢查</h2>
+			<div id="supportList"></div>
+		</div>
+		<script>
+			document.addEventListener("DOMContentLoaded", () => {
+				const supportList = document.getElementById("supportList");
+				const spellingList = document.getElementById("spellingList");
 
-                fetch("/api/list")
-                    .then(response => response.json())
-                    .then(data => {
-                        // Handle case rules
-                        data.cases.forEach(item => {
-                            const listItem = document.createElement("li");
-                            listItem.textContent = item.term;
-                            spellingList.appendChild(listItem);
-                        });
+				fetch("/api/list")
+					.then(response => response.json())
+					.then(data => {
+						// Handle case rules
+						data.cases.forEach(item => {
+							const listItem = document.createElement("li");
+							listItem.textContent = item.term;
+							spellingList.appendChild(listItem);
+						});
 
-                        // Group spelling rules by type
-                        const typeGroups = {};
-                        const typeNames = {
-                            political_terminology: "政治色彩用語",
-                            regional_difference: "兩岸用法差異",
-                            spelling_correction: "拼寫錯誤",
-                            term_ambiguity_check: "詞彙混淆問題",
-                        };
-                        // Define the desired order of types
-                        const typeOrder = [
-                            "term_ambiguity_check",
-                            "political_terminology",
-                            "regional_difference",
-                            "spelling_correction",
-                        ];
-                        // Sort items by type
-                        data.spelling.forEach(item => {
-                            if (!typeGroups[item.type]) {
-                                typeGroups[item.type] = [];
-                            }
-                            typeGroups[item.type].push(item);
-                        });
+						// Group spelling rules by type
+						const typeGroups = {};
+						const typeNames = {
+							political_terminology: "政治色彩用語",
+							regional_difference: "兩岸用法差異",
+							spelling_correction: "拼寫錯誤",
+							term_ambiguity_check: "詞彙混淆問題"
+						};
+						// Define the desired order of types
+						const typeOrder = ["term_ambiguity_check", "political_terminology", "regional_difference", "spelling_correction"];
+						// Sort items by type
+						data.spelling.forEach(item => {
+							if (!typeGroups[item.type]) {
+								typeGroups[item.type] = [];
+							}
+							typeGroups[item.type].push(item);
+						});
 
-                        // Create sections for each type
-                        typeOrder.forEach(type => {
-                            if (typeGroups[type]) {
-                                const typeSection =
-                                    document.createElement("div");
-                                typeSection.className = "type-section";
+						// Create sections for each type
+						typeOrder.forEach(type => {
+							if (typeGroups[type]) {
+								const typeSection = document.createElement("div");
+								typeSection.className = "type-section";
 
-                                const typeTitle = document.createElement("h3");
-                                typeTitle.className = "type-title";
-                                typeTitle.textContent = typeNames[type] || type;
-                                typeSection.appendChild(typeTitle);
+								const typeTitle = document.createElement("h3");
+								typeTitle.className = "type-title";
+								typeTitle.textContent = typeNames[type] || type;
+								typeSection.appendChild(typeTitle);
 
-                                const typeList = document.createElement("ul");
+								const typeList = document.createElement("ul");
 
-                                // Add items to the type list
-                                typeGroups[type].forEach(item => {
-                                    const listItem =
-                                        document.createElement("li");
-                                    listItem.textContent = `❌ ${
-                                        item.wrong
-                                    } → ✅ ${item.correct.join(", ")}`;
-                                    typeList.appendChild(listItem);
-                                });
+								// Add items to the type list
+								typeGroups[type].forEach(item => {
+									const listItem = document.createElement("li");
+									listItem.textContent = `❌ ${item.wrong} → ✅ ${item.correct.join(", ")}`;
+									typeList.appendChild(listItem);
+								});
 
-                                typeSection.appendChild(typeList);
-                                supportList.appendChild(typeSection);
-                            }
-                        });
-                    })
-                    .catch(error => {
-                        console.error("Error fetching support list:", error);
-                    });
-            });
-        </script>
-    </body>
+								typeSection.appendChild(typeList);
+								supportList.appendChild(typeSection);
+							}
+						});
+					})
+					.catch(error => {
+						console.error("Error fetching support list:", error);
+					});
+			});
+		</script>
+	</body>
 </html>

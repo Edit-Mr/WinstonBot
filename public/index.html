@@ -1,352 +1,359 @@
 <!-- @format -->
 
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-TW">
+	<head>
+		<meta charset="UTF-8" />
+		<meta
+			name="viewport"
+			content="width=device-width, initial-scale=1.0"
+		/>
+		<title>Winston Bot - 中國用語／錯字檢查工具</title>
+		<meta
+			name="description"
+			content="檢查常見中英文錯字、繁體漢字中國大陸用語、以及專有名詞的拼寫與大小寫是否正確。"
+		/>
+		<meta
+			name="author"
+			content="Elvis Mao, Pan, Winston Sung, Riley"
+		/>
+		<style>
+			body {
+				font-family:
+					system-ui,
+					-apple-system,
+					BlinkMacSystemFont,
+					"Segoe UI",
+					Roboto,
+					Oxygen,
+					Ubuntu,
+					Cantarell,
+					"Open Sans",
+					"Helvetica Neue",
+					sans-serif;
+				line-height: 1.6;
+				color: #333;
+				max-width: 800px;
+				margin: 0 auto;
+				padding: 20px;
+				background-color: #f5f5f5;
+			}
 
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Winston Bot - 中國用語／錯字檢查工具</title>
-    <meta name="description" content="檢查常見中英文錯字、繁體漢字中國大陸用語、以及專有名詞的拼寫與大小寫是否正確。" />
-    <meta name="author" content="Elvis Mao, Pan, Winston Sung, Riley" />
-    <style>
-        body {
-            font-family: system-ui, -apple-system, BlinkMacSystemFont,
-                "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans",
-                "Helvetica Neue", sans-serif;
-            line-height: 1.6;
-            color: #333;
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: #f5f5f5;
-        }
+			h1 {
+				color: #2c3e50;
+				text-align: center;
+				margin-bottom: 30px;
+			}
 
-        h1 {
-            color: #2c3e50;
-            text-align: center;
-            margin-bottom: 30px;
-        }
+			main {
+				background-color: white;
+				border-radius: 8px;
+				padding: 20px;
+				box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+			}
 
-        main {
-            background-color: white;
-            border-radius: 8px;
-            padding: 20px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
+			textarea {
+				width: calc(100% - 24px);
+				min-height: 150px;
+				padding: 12px;
+				border: 1px solid #ddd;
+				border-radius: 4px;
+				font-size: 16px;
+				margin-bottom: 15px;
+				resize: vertical;
+			}
 
-        textarea {
-            width: calc(100% - 24px);
-            min-height: 150px;
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 16px;
-            margin-bottom: 15px;
-            resize: vertical;
-        }
+			button {
+				background-color: #3498db;
+				color: white;
+				border: none;
+				padding: 10px 20px;
+				border-radius: 4px;
+				cursor: pointer;
+				font-size: 16px;
+				transition: background-color 0.3s;
+			}
 
-        button {
-            background-color: #3498db;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 16px;
-            transition: background-color 0.3s;
-        }
+			button:hover {
+				background-color: #2980b9;
+			}
 
-        button:hover {
-            background-color: #2980b9;
-        }
+			.buttons {
+				display: flex;
+				justify-content: space-between;
+				margin-bottom: 20px;
+				flex-wrap: wrap;
+			}
 
-        .buttons {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-        }
+			#inviteButton {
+				background-color: #5865f2;
+			}
 
-        #inviteButton {
-            background-color: #5865f2;
-        }
+			#result {
+				margin-top: 20px;
+				padding: 15px;
+				border-radius: 4px;
+				background-color: #f9f9f9;
+				border-left: 4px solid #3498db;
+				display: none;
+			}
 
-        #result {
-            margin-top: 20px;
-            padding: 15px;
-            border-radius: 4px;
-            background-color: #f9f9f9;
-            border-left: 4px solid #3498db;
-            display: none;
-        }
+			.mistake {
+				margin-bottom: 10px;
+				padding-bottom: 10px;
+				border-bottom: 1px solid #eee;
+			}
 
-        .mistake {
-            margin-bottom: 10px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid #eee;
-        }
+			.mistake:last-child {
+				border-bottom: none;
+			}
 
-        .mistake:last-child {
-            border-bottom: none;
-        }
+			.wrong {
+				color: #e74c3c;
+				font-weight: bold;
+			}
 
-        .wrong {
-            color: #e74c3c;
-            font-weight: bold;
-        }
+			.correct {
+				color: #27ae60;
+				font-weight: bold;
+			}
 
-        .correct {
-            color: #27ae60;
-            font-weight: bold;
-        }
+			.loading {
+				text-align: center;
+				display: none;
+			}
 
-        .loading {
-            text-align: center;
-            display: none;
-        }
+			.spinner {
+				border: 4px solid rgba(0, 0, 0, 0.1);
+				width: 36px;
+				height: 36px;
+				border-radius: 50%;
+				border-left-color: #3498db;
+				animation: spin 1s linear infinite;
+				display: inline-block;
+			}
 
-        .spinner {
-            border: 4px solid rgba(0, 0, 0, 0.1);
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            border-left-color: #3498db;
-            animation: spin 1s linear infinite;
-            display: inline-block;
-        }
+			a {
+				color: #3498db;
+				text-decoration: none;
+			}
 
-        a {
-            color: #3498db;
-            text-decoration: none;
-        }
+			section {
+				margin-top: 20px;
+			}
 
-        section {
-            margin-top: 20px;
-        }
+			footer {
+				text-align: center;
+				margin-top: 20px;
+				font-size: 14px;
+				color: #666;
+			}
 
-        footer {
-            text-align: center;
-            margin-top: 20px;
-            font-size: 14px;
-            color: #666;
-        }
+			footer a {
+				color: #666;
+				text-decoration: none;
+			}
 
-        footer a {
-            color: #666;
-            text-decoration: none;
-        }
+			footer a:hover {
+				color: #333;
+			}
 
-        footer a:hover {
-            color: #333;
-        }
+			@keyframes spin {
+				0% {
+					transform: rotate(0deg);
+				}
 
-        @keyframes spin {
-            0% {
-                transform: rotate(0deg);
-            }
+				100% {
+					transform: rotate(360deg);
+				}
+			}
 
-            100% {
-                transform: rotate(360deg);
-            }
-        }
+			li {
+				margin-bottom: 10px;
+			}
+		</style>
+		<!-- Google tag (gtag.js) -->
+		<script
+			async
+			src="https://www.googletagmanager.com/gtag/js?id=G-H69XEEC798"
+		></script>
+		<script>
+			window.dataLayer = window.dataLayer || [];
+			function gtag() {
+				dataLayer.push(arguments);
+			}
+			gtag("js", new Date());
 
-        li {
-            margin-bottom: 10px;
-        }
-    </style>
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-H69XEEC798"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag() {
-            dataLayer.push(arguments);
-        }
-        gtag("js", new Date());
+			gtag("config", "G-H69XEEC798");
+		</script>
+	</head>
 
-        gtag("config", "G-H69XEEC798");
-    </script>
-</head>
+	<body>
+		<main>
+			<h1>Winston Bot - 中國用語／錯字檢查工具</h1>
+			<p>輸入文字，檢查常見錯字、中國用語、以及專有名詞的拼寫與大小寫是否正確。</p>
 
-<body>
-    <main>
-        <h1>Winston Bot - 中國用語／錯字檢查工具</h1>
-        <p>
-            輸入文字，檢查常見錯字、中國用語、以及專有名詞的拼寫與大小寫是否正確。
-        </p>
+			<textarea
+				id="textInput"
+				placeholder="請輸入要檢查的文字..."
+			>
+一位程序員在掃描 qrcode 報到 sitcon 之後用 Chinese 改了一下進程並推送到 github</textarea
+			>
+			<div class="buttons">
+				<div>
+					<button id="checkButton">檢查</button>
+				</div>
+				<div>
+					<button
+						id="summaryButton"
+						onclick="summary()"
+					>
+						查看支援列表
+					</button>
+					<button
+						id="inviteButton"
+						onclick="inviteBot()"
+					>
+						邀請 Discord 機器人
+					</button>
+				</div>
+			</div>
+			<div
+				class="loading"
+				id="loading"
+			>
+				<div class="spinner"></div>
+				<p>檢查中...</p>
+			</div>
+			<div id="result"></div>
+			<section>
+				<h2>為什麼要當支語警察？</h2>
+				<p>簡單來說：</p>
+				<ul>
+					<li>這些是錯字，寫報告、學習歷程檔案、論文、網站時要盡量避免。</li>
+					<li>Threads 上面的支語警察會罵你共匪。</li>
+					<li>可以拿來判斷是否是 AI 生成，或是詐騙文案。</li>
+				</ul>
+				<p>
+					簡體中文是以廢除中文為前提的產物，有意圖、組織性地入侵台灣（如有不肖對岸人士運用國教院雙語辭書網的修改提議系統，有意地將其內容改為中國用語）。有些人覺得語言變化應該是自由的，不應該由少數自稱專業人士四處教育人們「應該怎麼講話」，但正因為我們想保有自由發展的語言，才必須辨識、排除有意妨礙我們的語言自由發展的用法。
+				</p>
+				<p>根據職業譯者Cr氏於系列<a href="https://www.thenewslens.com/column/366days/198935">「沒有中國用語的一年」</a>的分析，中國用語可以簡單分為以下幾種：</p>
+				<ul>
+					<li><strong>具共產黨色彩：</strong>如「很紅」在中國會用「很火」，因為「紅」是中國共產黨的象徵。或著是涉及中共教育當局律定的音譯規則，如「史達林」在對岸稱為「斯大林」。</li>
+					<li><strong>因文化與歷史因素而不同：</strong>如台灣科技比較早發展，經歷過錄影帶的時代，因此會用「倒帶」與「快轉」。但直接進入電腦時代的中國則是使用「快退」與「快進」。</li>
+					<li><strong>中國南北省籍、方言或地區性差異者：</strong>這種差異非出自兩岸政治邊界。就像我們平常打字有時候會打閩南的用語語法，或是「媳婦」這種不同地區意思不同的詞。</li>
+					<li><strong>都會這樣講，但使用頻率不同：</strong>如臺灣人大多使用「澳洲」，對岸則幾乎只使用「澳大利亞」，但中華民國外交部網站上是兩個都有列出的。</li>
+					<li><strong>中國用法才是「原有」用法的狀況：</strong>台灣教育部。你懂的。還有就是隨著時代的變化，如民國初期的「于是」現在大家習慣用「於是」。</li>
+				</ul>
+				<p>
+					這裡會檢查具共產黨色彩、以及因文化與歷史因素而不同的中國用語。同時也會幫你檢查常見的中文錯字（如身份證其實是身分證），以及專有名詞的拼寫與大小寫是否正確（如 google doc 其實是 Google
+					Docs）。如果有任何擴充建議歡迎到
+					<a href="https://github.com/Edit-Mr/WinstonBot/issues">GitHub Issue</a>
+					提出。
+				</p>
+			</section>
+		</main>
+		<footer>
+			Made with 😡 by <a href="https://github.com/Edit-Mr">Elvis Mao</a>, <a href="https://github.com/pan93412">Pan</a>, <a href="https://github.com/winstonsung">Winston Sung</a>, and
+			<a href="https://github.com/rileychh">Riley</a>
+			<br />
+			<a href="https://github.com/Edit-Mr/WinstonBot">View on GitHub</a>
+		</footer>
+		<script>
+			document.addEventListener("DOMContentLoaded", () => {
+				const textInput = document.getElementById("textInput");
+				const checkButton = document.getElementById("checkButton");
+				const resultDiv = document.getElementById("result");
+				const loadingDiv = document.getElementById("loading");
 
-        <textarea id="textInput" placeholder="請輸入要檢查的文字...">
-一位程序員在掃描 qrcode 報到 sitcon 之後用 Chinese 改了一下進程並推送到 github</textarea>
-        <div class="buttons">
-            <div>
-                <button id="checkButton">檢查</button>
-            </div>
-            <div>
-                <button id="summaryButton" onclick="summary()">
-                    查看支援列表
-                </button>
-                <button id="inviteButton" onclick="inviteBot()">
-                    邀請 Discord 機器人
-                </button>
-            </div>
-        </div>
-        <div class="loading" id="loading">
-            <div class="spinner"></div>
-            <p>檢查中...</p>
-        </div>
-        <div id="result"></div>
-        <section>
-            <h2>為什麼要當支語警察？</h2>
-            <p>簡單來說：</p>
-            <ul>
-                <li>
-                    這些是錯字，寫報告、學習歷程檔案、論文、網站時要盡量避免。
-                </li>
-                <li>Threads 上面的支語警察會罵你共匪。</li>
-                <li>可以拿來判斷是否是 AI 生成，或是詐騙文案。</li>
-            </ul>
-            <p>
-                簡體中文是以廢除中文為前提的產物，有意圖、組織性地入侵台灣（如有不肖對岸人士運用國教院雙語辭書網的修改提議系統，有意地將其內容改為中國用語）。有些人覺得語言變化應該是自由的，不應該由少數自稱專業人士四處教育人們「應該怎麼講話」，但正因為我們想保有自由發展的語言，才必須辨識、排除有意妨礙我們的語言自由發展的用法。
-            </p>
-            <p>
-                根據職業譯者Cr氏於系列<a
-                    href="https://www.thenewslens.com/column/366days/198935">「沒有中國用語的一年」</a>的分析，中國用語可以簡單分為以下幾種：
-            </p>
-            <ul>
-                <li>
-                    <strong>具共產黨色彩：</strong>如「很紅」在中國會用「很火」，因為「紅」是中國共產黨的象徵。或著是涉及中共教育當局律定的音譯規則，如「史達林」在對岸稱為「斯大林」。
-                </li>
-                <li>
-                    <strong>因文化與歷史因素而不同：</strong>如台灣科技比較早發展，經歷過錄影帶的時代，因此會用「倒帶」與「快轉」。但直接進入電腦時代的中國則是使用「快退」與「快進」。
-                </li>
-                <li>
-                    <strong>中國南北省籍、方言或地區性差異者：</strong>這種差異非出自兩岸政治邊界。就像我們平常打字有時候會打閩南的用語語法，或是「媳婦」這種不同地區意思不同的詞。
-                </li>
-                <li>
-                    <strong>都會這樣講，但使用頻率不同：</strong>如臺灣人大多使用「澳洲」，對岸則幾乎只使用「澳大利亞」，但中華民國外交部網站上是兩個都有列出的。
-                </li>
-                <li>
-                    <strong>中國用法才是「原有」用法的狀況：</strong>台灣教育部。你懂的。還有就是隨著時代的變化，如民國初期的「于是」現在大家習慣用「於是」。
-                </li>
-            </ul>
-            <p>
-                這裡會檢查具共產黨色彩、以及因文化與歷史因素而不同的中國用語。同時也會幫你檢查常見的中文錯字（如身份證其實是身分證），以及專有名詞的拼寫與大小寫是否正確（如
-                google doc 其實是 Google Docs）。如果有任何擴充建議歡迎到
-                <a href="https://github.com/Edit-Mr/WinstonBot/issues">GitHub Issue</a>
-                提出。
-            </p>
-        </section>
-    </main>
-    <footer>
-        Made with 😡 by <a href="https://github.com/Edit-Mr">Elvis Mao</a>,
-        <a href="https://github.com/pan93412">Pan</a>,
-        <a href="https://github.com/winstonsung">Winston Sung</a>, and
-        <a href="https://github.com/rileychh">Riley</a>
-        <br />
-        <a href="https://github.com/Edit-Mr/WinstonBot">View on GitHub</a>
-    </footer>
-    <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            const textInput = document.getElementById("textInput");
-            const checkButton = document.getElementById("checkButton");
-            const resultDiv = document.getElementById("result");
-            const loadingDiv = document.getElementById("loading");
+				checkButton.addEventListener("click", async () => {
+					gtag("event", "click_action", {
+						id: "WinstonCheck"
+					});
 
-            checkButton.addEventListener("click", async () => {
-                gtag("event", "click_action", {
-                    id: "WinstonCheck"
-                });
+					const text = textInput.value.trim();
 
-                const text = textInput.value.trim();
+					if (!text) {
+						alert("請輸入文字");
+						return;
+					}
 
-                if (!text) {
-                    alert("請輸入文字");
-                    return;
-                }
+					// Show loading
+					loadingDiv.style.display = "block";
+					resultDiv.style.display = "none";
 
-                // Show loading
-                loadingDiv.style.display = "block";
-                resultDiv.style.display = "none";
+					try {
+						const response = await fetch("/api/check", {
+							method: "POST",
+							headers: {
+								"Content-Type": "application/x-www-form-urlencoded"
+							},
+							body: `text=${encodeURIComponent(text)}`
+						});
 
-                try {
-                    const response = await fetch("/api/check", {
-                        method: "POST",
-                        headers: {
-                            "Content-Type":
-                                "application/x-www-form-urlencoded",
-                        },
-                        body: `text=${encodeURIComponent(text)}`,
-                    });
+						const data = await response.json();
 
-                    const data = await response.json();
+						// Hide loading
+						loadingDiv.style.display = "none";
 
-                    // Hide loading
-                    loadingDiv.style.display = "none";
+						if (data.error) {
+							resultDiv.innerHTML = `<p>錯誤：${data.error}</p>`;
+							resultDiv.style.display = "block";
+							return;
+						}
 
-                    if (data.error) {
-                        resultDiv.innerHTML = `<p>錯誤：${data.error}</p>`;
-                        resultDiv.style.display = "block";
-                        return;
-                    }
+						if (data.mistakes && data.mistakes.length > 0) {
+							let html = "<h3>檢查結果：</h3>";
 
-                    if (data.mistakes && data.mistakes.length > 0) {
-                        let html = "<h3>檢查結果：</h3>";
+							data.mistakes.forEach(mistake => {
+								const correctTerms = mistake.correct.join("、");
+								let message = "";
 
-                        data.mistakes.forEach(mistake => {
-                            const correctTerms = mistake.correct.join("、");
-                            let message = "";
+								switch (mistake.type) {
+									case "case":
+										message = `「<span class="wrong">${mistake.wrong}</span>」應寫成「<span class="correct">${correctTerms}</span>」（專有名詞請注意拼法及大小寫）`;
+										break;
+									case "political_terminology":
+										message = `「<span class="wrong">${mistake.wrong}</span>」是含有政治色彩的中國用語，請考慮改用「<span class="correct">${correctTerms}</span>」`;
+										break;
+									case "regional_difference":
+										message = `「<span class="wrong">${mistake.wrong}</span>」（✗）<br>「<span class="correct">${correctTerms}</span>」（✓）`;
+										break;
+									case "spelling_correction":
+										message = `「<span class="wrong">${mistake.wrong}</span>」應寫成「<span class="correct">${correctTerms}</span>」`;
+										break;
+									case "term_ambiguity_check":
+										message = `你確定你想說的是「<span class="wrong">${mistake.wrong}</span>」而不是「<span class="correct">${correctTerms}</span>」嗎？`;
+										break;
+									default:
+										message = `「<span class="wrong">${mistake.wrong}</span>」（✗）<br>「<span class="correct">${correctTerms}</span>」（✓）`;
+								}
 
-                            switch (mistake.type) {
-                                case "case":
-                                    message = `「<span class="wrong">${mistake.wrong}</span>」應寫成「<span class="correct">${correctTerms}</span>」（專有名詞請注意拼法及大小寫）`;
-                                    break;
-                                case "political_terminology":
-                                    message = `「<span class="wrong">${mistake.wrong}</span>」是含有政治色彩的中國用語，請考慮改用「<span class="correct">${correctTerms}</span>」`;
-                                    break;
-                                case "regional_difference":
-                                    message = `「<span class="wrong">${mistake.wrong}</span>」（✗）<br>「<span class="correct">${correctTerms}</span>」（✓）`;
-                                    break;
-                                case "spelling_correction":
-                                    message = `「<span class="wrong">${mistake.wrong}</span>」應寫成「<span class="correct">${correctTerms}</span>」`;
-                                    break;
-                                case "term_ambiguity_check":
-                                    message = `你確定你想說的是「<span class="wrong">${mistake.wrong}</span>」而不是「<span class="correct">${correctTerms}</span>」嗎？`;
-                                    break;
-                                default:
-                                    message = `「<span class="wrong">${mistake.wrong}</span>」（✗）<br>「<span class="correct">${correctTerms}</span>」（✓）`;
-                            }
+								html += `<div class="mistake">${message}</div>`;
+							});
 
-                            html += `<div class="mistake">${message}</div>`;
-                        });
+							resultDiv.innerHTML = html;
+						} else {
+							resultDiv.innerHTML = "<p>沒有發現拼寫或用詞問題！</p>";
+						}
 
-                        resultDiv.innerHTML = html;
-                    } else {
-                        resultDiv.innerHTML =
-                            "<p>沒有發現拼寫或用詞問題！</p>";
-                    }
+						resultDiv.style.display = "block";
+					} catch (error) {
+						console.error("Error:", error);
+						loadingDiv.style.display = "none";
+						resultDiv.innerHTML = "<p>檢查時發生錯誤，請稍後再試。</p>";
+						resultDiv.style.display = "block";
+					}
+				});
+			});
 
-                    resultDiv.style.display = "block";
-                } catch (error) {
-                    console.error("Error:", error);
-                    loadingDiv.style.display = "none";
-                    resultDiv.innerHTML =
-                        "<p>檢查時發生錯誤，請稍後再試。</p>";
-                    resultDiv.style.display = "block";
-                }
-            });
-        });
+			function inviteBot() {
+				window.open("https://discord.com/oauth2/authorize?client_id=1342364253486846032", "_blank");
+			}
 
-        function inviteBot() {
-            window.open(
-                "https://discord.com/oauth2/authorize?client_id=1342364253486846032",
-                "_blank"
-            );
-        }
-
-        function summary() {
-            window.open("/list", "_blank");
-        }
-    </script>
-</body>
-
+			function summary() {
+				window.open("/list", "_blank");
+			}
+		</script>
+	</body>
 </html>

@@ -23,18 +23,19 @@ GitHub Actions CI 版本請見 [WinstonBot-CI](https://github.com/Edit-Mr/Winsto
 ### 安裝步驟
 
 1. 複製專案
+
    ```
    git clone https://github.com/yourusername/winstonbot.git
    cd winstonbot
    ```
 
 2. 安裝依賴
+
    ```
    pnpm install
    ```
 
-3. 設定環境變數
-   在專案根目錄建立 `.env` 檔案，並填入以下內容：
+3. 設定環境變數在專案根目錄建立 `.env` 檔案，並填入以下內容：
    ```
    DISCORD_TOKEN=你的Discord機器人Token
    MONGODB_URI=你的MongoDB連線字串

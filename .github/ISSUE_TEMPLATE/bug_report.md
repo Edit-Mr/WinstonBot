@@ -1,9 +1,9 @@
 ---
 name: 問題回報 Bug Report
 about: 回報問題以幫助我們改進
-title: '[BUG] '
+title: "[BUG] "
 labels: bug
-assignees: ''
+assignees: ""
 ---
 
 **描述問題**
