@@ -1,6 +1,8 @@
 # WinstonBot - 文字檢查工具
 
-WinstonBot 是一個多功能的文字檢查工具，可以檢查拼寫錯誤、大小寫問題、政治色彩用語等。它提供了 Discord Bot 和網頁介面兩種使用方式。
+WinstonBot 是一個中文檢查工具，可以檢查拼寫錯誤、專有名詞大小寫、中國政治色彩用語等問題。它提供了 [Discord Bot](https://discord.com/oauth2/authorize?client_id=1342364253486846032)、[網頁](https://winston.emtech.cc/)、與 [CI](https://github.com/Edit-Mr/WinstonBot-CI) 三種使用方式。
+
+GitHub Actions CI 版本請見 [WinstonBot-CI](https://github.com/Edit-Mr/WinstonBot-CI)。
 
 ## 功能特點
 
@@ -51,7 +53,9 @@ pnpm start
 
 ### Discord Bot 使用方法
 
-將 Bot 邀請到你的 Discord 伺服器後，它會自動檢查所有訊息中的拼寫錯誤和用詞問題。
+將 [Winston Bot](https://discord.com/oauth2/authorize?client_id=1342364253486846032) 邀請到你的 Discord 伺服器後，它會自動檢查所有訊息中的拼寫錯誤和用詞問題。
+
+> [邀請連結](https://discord.com/oauth2/authorize?client_id=1342364253486846032)
 
 #### 斜線指令
 
