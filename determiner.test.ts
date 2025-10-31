@@ -280,26 +280,20 @@ suite("Determiner", () => {
 		expect(result).toHaveLength(0);
 	});
 
-	test("三個反引號內的文字應該被忽略 (inline code block)", async () => {
-		const spellingDb = new MockSpellingDatabase([]);
-		const caseDb = new MockCaseDatabase([{ term: "JavaScript" }]);
+	suite("超過兩個反引號內的文字應該被忽略 (inline code block)", async () => {
+		// We support up to 6 backticks
+		for (let i = 2; i <= 6; i++) {
+			test(`超過 ${i} 個反引號內的文字應該被忽略 (inline code block)`, async () => {
+				const backticks = "`".repeat(i);
+				const text = `這是 ${backticks}javascript${backticks} 的文字`;
+				const spellingDb = new MockSpellingDatabase([]);
+				const caseDb = new MockCaseDatabase([{ term: "JavaScript" }]);
 
-		const determiner = new Determiner(spellingDb, caseDb);
-		const text = "這是 ```javascript``` 的文字";
-
-		const result = await determiner.checkSpelling(text);
-		expect(result).toHaveLength(0);
-	});
-
-	test("兩個反引號內的文字應該被忽略 (inline code block)", async () => {
-		const spellingDb = new MockSpellingDatabase([]);
-		const caseDb = new MockCaseDatabase([{ term: "JavaScript" }]);
-
-		const determiner = new Determiner(spellingDb, caseDb);
-		const text = "這是 ``javascript`` 的文字";
-
-		const result = await determiner.checkSpelling(text);
-		expect(result).toHaveLength(0);
+				const determiner = new Determiner(spellingDb, caseDb);
+				const result = await determiner.checkSpelling(text);
+				expect(result).toHaveLength(0);
+			});
+		}
 	});
 
 	test("應該無視只有單邊的空反引號", async () => {
