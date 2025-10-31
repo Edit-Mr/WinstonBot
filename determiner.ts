@@ -41,6 +41,39 @@ export class Determiner {
 			// 移除相對路徑（如 ./path、../img.png、/assets/icon.svg）
 			.replace(/(?:\.\.?\/|\/)[^\s]+/g, "");
 
+		// 找出所有需要排除的區塊（代碼區塊、Markdown 連結、自動連結）
+		const excludedRanges: Array<{ start: number; end: number }> = [];
+
+		// 1. 單行反引號代碼區塊 `code`
+		const singleBacktickRegex = /`[^`]+`/g;
+		let match;
+		while ((match = singleBacktickRegex.exec(content)) !== null) {
+			excludedRanges.push({ start: match.index, end: match.index + match[0].length });
+		}
+
+		// 2. 多行反引號代碼區塊 ```code```
+		const tripleBacktickRegex = /```[\s\S]+?```/g;
+		while ((match = tripleBacktickRegex.exec(content)) !== null) {
+			excludedRanges.push({ start: match.index, end: match.index + match[0].length });
+		}
+
+		// 3. Markdown 連結 [text](url)
+		const markdownLinkRegex = /\[([^\]]*)\]\(([^)]+)\)/g;
+		while ((match = markdownLinkRegex.exec(content)) !== null) {
+			excludedRanges.push({ start: match.index, end: match.index + match[0].length });
+		}
+
+		// 4. 自動連結 <URL>
+		const autoLinkRegex = /<[^>]+>/g;
+		while ((match = autoLinkRegex.exec(content)) !== null) {
+			excludedRanges.push({ start: match.index, end: match.index + match[0].length });
+		}
+
+		// 輔助函數：檢查位置是否在排除區塊內
+		const isExcluded = (position: number): boolean => {
+			return excludedRanges.some(range => position >= range.start && position < range.end);
+		};
+
 		const wordType = detectChineseType(sanitizedContent);
 
 		// 檢查一般規則（proper 和 warn）
@@ -59,12 +92,26 @@ export class Determiner {
 
 			if (!wordRegex.test(searchText)) continue;
 
-			mistakes.push({
-				wrong: rule.wrong,
-				correct: rule.correct,
-				type: rule.type,
-				traditionalOnly: rule.traditionalOnly
-			});
+			// 檢查匹配的詞是否在排除區塊內
+			const regexForPosition = isChinese ? new RegExp(searchWord, "gi") : new RegExp(`\\b${searchWord}\\b`, "gi");
+			let foundMatch = false;
+			let matchResult;
+			while ((matchResult = regexForPosition.exec(content)) !== null) {
+				// 檢查匹配的開始位置是否在排除區塊內
+				if (!isExcluded(matchResult.index)) {
+					foundMatch = true;
+					break;
+				}
+			}
+
+			if (foundMatch) {
+				mistakes.push({
+					wrong: rule.wrong,
+					correct: rule.correct,
+					type: rule.type,
+					traditionalOnly: rule.traditionalOnly
+				});
+			}
 		}
 
 		// 檢查大小寫規則
@@ -77,44 +124,23 @@ export class Determiner {
 				continue;
 			}
 
-			// 找出所有被反引號包圍的文字（包括單行和多行）
-			const backtickMatches = sanitizedContent.match(/`[^`]+`/g) || [];
-			const tripleBacktickMatches = sanitizedContent.match(/```[\s\S]+?```/g) || [];
-
-			// 處理單行反引號
-			const singleBacktickTexts = backtickMatches.map(match => match.slice(1, -1).toLowerCase());
-
-			// 處理多行反引號，移除語言標記（如果有的話）
-			const tripleBacktickTexts = tripleBacktickMatches.map(match => {
-				const content = match.slice(3, -3); // 移除前後的 ```
-				const firstLine = content.split("\n")[0].trim();
-				// 如果第一行是語言標記，移除它
-				const text = firstLine.match(/^[a-zA-Z0-9]+$/) ? content.split("\n").slice(1).join("\n") : content;
-				return text.toLowerCase();
-			});
-
-			const backtickTexts = [...singleBacktickTexts, ...tripleBacktickTexts];
-
 			const regex = new RegExp(lowerTerm, "gi");
-			const matches = sanitizedContent.match(regex);
-			if (!matches) {
-				continue;
-			}
-
-			for (const match of matches) {
-				// 如果匹配的文字在反引號內，跳過大小寫檢查
-				if (backtickTexts.some(text => text.includes(match.toLowerCase()))) {
+			let matchResult;
+			while ((matchResult = regex.exec(content)) !== null) {
+				// 如果匹配的文字在排除區塊內，跳過大小寫檢查
+				if (isExcluded(matchResult.index)) {
 					continue;
 				}
 
+				const match = matchResult[0];
 				if (match === rule.term) {
 					continue;
 				}
 
 				// Get the characters before and after the match
-				const matchIndex = sanitizedContent.indexOf(match);
-				const charBefore = matchIndex > 0 ? sanitizedContent[matchIndex - 1] : "";
-				const charAfter = matchIndex + match.length < sanitizedContent.length ? sanitizedContent[matchIndex + match.length] : "";
+				const matchIndex = matchResult.index;
+				const charBefore = matchIndex > 0 ? content[matchIndex - 1] : "";
+				const charAfter = matchIndex + match.length < content.length ? content[matchIndex + match.length] : "";
 
 				// Skip if there are English letters before or after
 				if (!/[A-Za-z]/.test(charBefore) && !/[A-Za-z]/.test(charAfter)) {
