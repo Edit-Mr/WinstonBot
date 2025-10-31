@@ -16,6 +16,10 @@ export class Determiner {
 	#spellingDatabase: ISpellingDatabase;
 	#caseDatabase: ICaseDatabase;
 
+	// https://datatracker.ietf.org/doc/html/rfc1738#section-2.1
+	// https://datatracker.ietf.org/doc/html/rfc1738#section-3.1
+	#URL_REGEX = /[a-zA-Z0-9+.-]*:\/\/[^\s]+/g;
+
 	constructor(spellingDatabase: ISpellingDatabase, caseDatabase: ICaseDatabase) {
 		this.#spellingDatabase = spellingDatabase;
 		this.#caseDatabase = caseDatabase;
@@ -36,7 +40,7 @@ export class Determiner {
 
 		const mistakes: SpellingMistake[] = [];
 		this.#checkGeneralRules(rules, content, sanitizedContent, wordType, isExcluded, mistakes);
-		this.#checkCaseRules(caseRules, content, isExcluded, mistakes);
+		this.#checkCaseRules(caseRules, content, sanitizedContent, isExcluded, mistakes);
 
 		return mistakes;
 	}
@@ -50,7 +54,7 @@ export class Determiner {
 		const isOverlapping = (start: number, end: number) => ranges.some(range => start < range.end && end > range.start);
 
 		// 排除 URL、檔案路徑、@ 標記
-		this.#addMatchedRanges(content, /:\/\/[^\s]+/g, ranges);
+		this.#addMatchedRanges(content, this.#URL_REGEX, ranges);
 		this.#addPathRanges(content, ranges);
 		this.#addMatchedRanges(content, /@[a-zA-Z0-9_]+/g, ranges, isOverlapping);
 
@@ -89,9 +93,9 @@ export class Determiner {
 			const start = match.index;
 			const end = start + match[0].length;
 
-			// 檢查路徑前是否有 ://（例如 https://github.com/user/repo）
+			// 檢查路徑前是否有 <scheme>://（例如 https://github.com/user/repo）
 			const beforePath = content.slice(Math.max(0, start - BACKTRACK_LENGTH), start);
-			if (/:\/\/[^\s]*$/.test(beforePath)) {
+			if (this.#URL_REGEX.test(beforePath)) {
 				continue; // 路徑是 URL 的一部分，跳過
 			}
 
@@ -230,7 +234,7 @@ export class Determiner {
 	/**
 	 * 檢查大小寫規則
 	 */
-	#checkCaseRules(caseRules: CaseRule[], content: string, isExcluded: (position: number) => boolean, mistakes: SpellingMistake[]): void {
+	#checkCaseRules(caseRules: CaseRule[], content: string, sanitizedContent: string, isExcluded: (position: number) => boolean, mistakes: SpellingMistake[]): void {
 		const processedPositions = new Set<number>();
 
 		for (const rule of caseRules) {
@@ -243,7 +247,8 @@ export class Determiner {
 			}
 
 			const lowerTerm = rule.term.toLowerCase();
-			if (!content.toLowerCase().includes(lowerTerm)) continue;
+			// 先在 sanitized content 中檢查是否存在該 term，避免在排除區塊中搜尋
+			if (!sanitizedContent.toLowerCase().includes(lowerTerm)) continue;
 
 			const regex = new RegExp(lowerTerm, "gi");
 			let match: RegExpExecArray | null;
