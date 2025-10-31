@@ -149,7 +149,7 @@ suite("Determiner", () => {
 		expect(result).toHaveLength(0);
 	});
 
-	test("應該忽略 Markdown 連結內的錯誤", async () => {
+	test("應該處理 Markdown 連結內的錯誤", async () => {
 		const spellingDb = new MockSpellingDatabase([
 			{
 				wrong: "錯誤",
@@ -164,7 +164,9 @@ suite("Determiner", () => {
 		const text = "這是 [錯誤](https://example.com) 的文字";
 
 		const result = await determiner.checkSpelling(text);
-		expect(result).toHaveLength(0);
+		expect(result).toHaveLength(1);
+		expect(result[0].wrong).toBe("錯誤");
+		expect(result[0].correct).toEqual(["正確"]);
 	});
 
 	test("應該忽略自動連結內的錯誤", async () => {
@@ -179,7 +181,7 @@ suite("Determiner", () => {
 		const caseDb = new MockCaseDatabase([]);
 
 		const determiner = new Determiner(spellingDb, caseDb);
-		const text = "這是 <錯誤> 的文字";
+		const text = "這是 <http://錯誤> 的文字";
 
 		const result = await determiner.checkSpelling(text);
 		expect(result).toHaveLength(0);
@@ -228,7 +230,7 @@ suite("Determiner", () => {
 		expect(result[0].correct).toEqual(["JavaScript"]);
 	});
 
-	test("應該忽略 Markdown 連結內的大小寫錯誤", async () => {
+	test("應該處理 Markdown 連結內的大小寫錯誤", async () => {
 		const spellingDb = new MockSpellingDatabase([]);
 		const caseDb = new MockCaseDatabase([{ term: "JavaScript" }]);
 
@@ -236,18 +238,9 @@ suite("Determiner", () => {
 		const text = "這是 [javascript](https://example.com) 的連結";
 
 		const result = await determiner.checkSpelling(text);
-		expect(result).toHaveLength(0);
-	});
-
-	test("應該忽略自動連結內的大小寫錯誤", async () => {
-		const spellingDb = new MockSpellingDatabase([]);
-		const caseDb = new MockCaseDatabase([{ term: "JavaScript" }]);
-
-		const determiner = new Determiner(spellingDb, caseDb);
-		const text = "這是 <javascript> 的自動連結";
-
-		const result = await determiner.checkSpelling(text);
-		expect(result).toHaveLength(0);
+		expect(result).toHaveLength(1);
+		expect(result[0].wrong).toBe("javascript");
+		expect(result[0].correct).toEqual(["JavaScript"]);
 	});
 
 	test("應該正確處理多個排除區塊", async () => {
@@ -262,7 +255,7 @@ suite("Determiner", () => {
 		const caseDb = new MockCaseDatabase([]);
 
 		const determiner = new Determiner(spellingDb, caseDb);
-		const text = "`錯誤` [錯誤](url) <錯誤> 這裡有錯誤";
+		const text = "`錯誤` [錯誤](url) <http://錯誤> 這裡有錯誤";
 
 		const result = await determiner.checkSpelling(text);
 		expect(result).toHaveLength(1);
@@ -287,7 +280,18 @@ suite("Determiner", () => {
 		expect(result).toHaveLength(0);
 	});
 
-	test("兩個空反引號內的文字應該被忽略 (inline code block)", async () => {
+	test("三個反引號內的文字應該被忽略 (inline code block)", async () => {
+		const spellingDb = new MockSpellingDatabase([]);
+		const caseDb = new MockCaseDatabase([{ term: "JavaScript" }]);
+
+		const determiner = new Determiner(spellingDb, caseDb);
+		const text = "這是 ```javascript``` 的文字";
+
+		const result = await determiner.checkSpelling(text);
+		expect(result).toHaveLength(0);
+	});
+
+	test("兩個反引號內的文字應該被忽略 (inline code block)", async () => {
 		const spellingDb = new MockSpellingDatabase([]);
 		const caseDb = new MockCaseDatabase([{ term: "JavaScript" }]);
 
@@ -316,5 +320,23 @@ suite("Determiner", () => {
 		expect(result).toHaveLength(1);
 		expect(result[0].wrong).toBe("test");
 		expect(result[0].correct).toEqual(["測試"]);
+	});
+
+	test("網址不該被誤判為錯誤", async () => {
+		const spellingDb = new MockSpellingDatabase([
+			{
+				wrong: "example",
+				correct: ["Example"],
+				type: "spelling_correction",
+				traditionalOnly: false
+			}
+		]);
+		const caseDb = new MockCaseDatabase([]);
+
+		const determiner = new Determiner(spellingDb, caseDb);
+		const text = "這是 https://example.com 的文字";
+
+		const result = await determiner.checkSpelling(text);
+		expect(result).toHaveLength(0);
 	});
 });
