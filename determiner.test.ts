@@ -77,7 +77,7 @@ suite("Determiner", () => {
 		expect(result).toHaveLength(1);
 	});
 
-	test("應該忽略單行反引號代碼區塊內的錯誤", async () => {
+	test("應該忽略單行反引號程式碼區塊內的錯誤", async () => {
 		const spellingDb = new MockSpellingDatabase([
 			{
 				wrong: "錯誤",
@@ -95,7 +95,7 @@ suite("Determiner", () => {
 		expect(result).toHaveLength(0);
 	});
 
-	test("應該忽略多行反引號代碼區塊內的錯誤", async () => {
+	test("應該忽略多行反引號有語言標記程式碼區塊內的錯誤", async () => {
 		const spellingDb = new MockSpellingDatabase([
 			{
 				wrong: "錯誤",
@@ -107,7 +107,43 @@ suite("Determiner", () => {
 		const caseDb = new MockCaseDatabase([]);
 
 		const determiner = new Determiner(spellingDb, caseDb);
-		const text = "這是代碼：\n```\n錯誤\n```\n的文字";
+		const text = "這是程式碼：\n```javascript\n錯誤\n```\n的文字";
+
+		const result = await determiner.checkSpelling(text);
+		expect(result).toHaveLength(0);
+	});
+
+	test("應該忽略多行反引號有其他標記程式碼區塊內的錯誤", async () => {
+		const spellingDb = new MockSpellingDatabase([
+			{
+				wrong: "錯誤",
+				correct: ["正確"],
+				type: "spelling_correction",
+				traditionalOnly: false
+			}
+		]);
+		const caseDb = new MockCaseDatabase([]);
+
+		const determiner = new Determiner(spellingDb, caseDb);
+		const text = "這是程式碼：\n```javascript line=5\n錯誤\n```\n的文字";
+
+		const result = await determiner.checkSpelling(text);
+		expect(result).toHaveLength(0);
+	});
+
+	test("應該忽略多行反引號程式碼區塊內的錯誤", async () => {
+		const spellingDb = new MockSpellingDatabase([
+			{
+				wrong: "錯誤",
+				correct: ["正確"],
+				type: "spelling_correction",
+				traditionalOnly: false
+			}
+		]);
+		const caseDb = new MockCaseDatabase([]);
+
+		const determiner = new Determiner(spellingDb, caseDb);
+		const text = "這是程式碼：\n```\n錯誤\n```\n的文字";
 
 		const result = await determiner.checkSpelling(text);
 		expect(result).toHaveLength(0);
@@ -168,18 +204,18 @@ suite("Determiner", () => {
 		expect(result[0].wrong).toBe("錯誤");
 	});
 
-	test("應該忽略代碼區塊內的大小寫錯誤", async () => {
+	test("應該忽略程式碼區塊內的大小寫錯誤", async () => {
 		const spellingDb = new MockSpellingDatabase([]);
 		const caseDb = new MockCaseDatabase([{ term: "JavaScript" }]);
 
 		const determiner = new Determiner(spellingDb, caseDb);
-		const text = "這是 `javascript` 的代碼";
+		const text = "這是 `javascript` 的程式碼";
 
 		const result = await determiner.checkSpelling(text);
 		expect(result).toHaveLength(0);
 	});
 
-	test("應該檢查不在代碼區塊內的大小寫錯誤", async () => {
+	test("應該檢查不在程式碼區塊內的大小寫錯誤", async () => {
 		const spellingDb = new MockSpellingDatabase([]);
 		const caseDb = new MockCaseDatabase([{ term: "JavaScript" }]);
 
