@@ -1,6 +1,6 @@
 import { detectChineseType } from "./zhhanttw.ts";
 import type { ISpellingDatabase, ICaseDatabase } from "./database-interfaces.ts";
-import { type SpellingRuleType } from "./models.ts";
+import { type SpellingRuleType, type CaseRule } from "./models.ts";
 
 /**
  * 拼寫錯誤的資訊
@@ -230,10 +230,18 @@ export class Determiner {
 	/**
 	 * 檢查大小寫規則
 	 */
-	#checkCaseRules(caseRules: Array<{ term: string }>, content: string, isExcluded: (position: number) => boolean, mistakes: SpellingMistake[]): void {
+	#checkCaseRules(caseRules: CaseRule[], content: string, isExcluded: (position: number) => boolean, mistakes: SpellingMistake[]): void {
 		const processedPositions = new Set<number>();
 
 		for (const rule of caseRules) {
+			// 收集所有有效的大小寫形式：term 和 alternatives
+			const validForms = new Set<string>([rule.term]);
+			if (rule.alternatives && rule.alternatives.length > 0) {
+				for (const alt of rule.alternatives) {
+					validForms.add(alt);
+				}
+			}
+
 			const lowerTerm = rule.term.toLowerCase();
 			if (!content.toLowerCase().includes(lowerTerm)) continue;
 
@@ -244,8 +252,8 @@ export class Determiner {
 				const position = match.index;
 				const matchedText = match[0];
 
-				// 跳過已處理、排除區塊或大小寫正確的符合項目
-				if (processedPositions.has(position) || isExcluded(position) || matchedText === rule.term) {
+				// 跳過已處理、排除區塊或大小寫正確的符合項目（包括 alternatives）
+				if (processedPositions.has(position) || isExcluded(position) || validForms.has(matchedText)) {
 					continue;
 				}
 
