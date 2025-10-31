@@ -41,14 +41,12 @@ export class MockSpellingDatabase implements ISpellingDatabase {
 	}
 
 	async queryRules(query: string, type?: SpellingRuleType): Promise<SpellingRule[]> {
-		let filtered = this.#rules.filter(rule => 
-			rule.wrong.toLowerCase().includes(query.toLowerCase())
-		);
-		
+		let filtered = this.#rules.filter(rule => rule.wrong.toLowerCase().includes(query.toLowerCase()));
+
 		if (type) {
 			filtered = filtered.filter(rule => rule.type === type);
 		}
-		
+
 		return filtered;
 	}
 
@@ -84,9 +82,7 @@ export class MockCaseDatabase implements ICaseDatabase {
 	}
 
 	async queryRules(query: string): Promise<CaseRule[]> {
-		return this.#rules.filter(rule => 
-			rule.term.toLowerCase().includes(query.toLowerCase())
-		);
+		return this.#rules.filter(rule => rule.term.toLowerCase().includes(query.toLowerCase()));
 	}
 
 	invalidateCache(): void {
