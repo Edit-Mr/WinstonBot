@@ -73,8 +73,8 @@ export class MockCaseDatabase implements ICaseDatabase {
 		return this.getRules();
 	}
 
-	async addRule(term: string): Promise<void> {
-		this.#rules.push({ term, _id: new mongoose.Types.ObjectId().toString() });
+	async addRule(term: string, alternatives?: string[] | null): Promise<void> {
+		this.#rules.push({ term, alternatives, _id: new mongoose.Types.ObjectId().toString() });
 	}
 
 	async removeRule(ruleId: ObjectId): Promise<void> {

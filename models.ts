@@ -46,6 +46,8 @@ export const SpellingRuleModel = mongoose.model<SpellingRule>("SpellingRule", sp
  */
 export interface CaseRule {
 	term: string; // 正確的大小寫形式
+
+	alternatives?: string[] | null; // 其他可能的大小寫形式
 }
 
 export const caseRule = new mongoose.Schema<CaseRule>({
@@ -53,6 +55,18 @@ export const caseRule = new mongoose.Schema<CaseRule>({
 		type: String,
 		required: true,
 		unique: true
+	},
+	alternatives: {
+		type: [String],
+		required: false,
+		validate: {
+			validator: function (v: unknown) {
+				if (v === undefined || v === null) return true;
+				if (Array.isArray(v)) return v.every(item => typeof item === "string");
+				return false;
+			},
+			message: "alternatives must be an array of strings, null, or undefined"
+		}
 	}
 });
 

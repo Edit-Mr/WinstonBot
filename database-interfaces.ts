@@ -80,8 +80,9 @@ export interface ICaseDatabase {
 	 * Add a case rule to the database
 	 *
 	 * @param term The term to add as a case rule
+	 * @param alternatives The alternatives to add as a case rule
 	 */
-	addRule(term: string): Promise<void>;
+	addRule(term: string, alternatives?: string[] | null): Promise<void>;
 
 	/**
 	 * Remove a case rule from the database

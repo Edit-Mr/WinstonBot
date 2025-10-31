@@ -137,9 +137,10 @@ export class CaseDatabase implements ICaseDatabase {
 	 * Add a case rule to the database
 	 *
 	 * @param term The term to add as a case rule
+	 * @param alternatives The alternatives to add as a case rule
 	 */
-	async addRule(term: string): Promise<void> {
-		await this.#collection.insertOne({ term });
+	async addRule(term: string, alternatives?: string[] | null): Promise<void> {
+		await this.#collection.insertOne({ term, alternatives });
 		this.invalidateCache();
 	}
 
