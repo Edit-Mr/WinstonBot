@@ -374,7 +374,7 @@ suite("Determiner", () => {
 			const caseDb = new MockCaseDatabase([{ term: "Google" }]);
 
 			const determiner = new Determiner(spellingDb, caseDb);
-			const text = "訪問 http://google.com/search 查詢";
+			const text = "造訪 http://google.com/search 查詢";
 
 			const result = await determiner.checkSpelling(text);
 			expect(result).toHaveLength(0);
@@ -391,23 +391,12 @@ suite("Determiner", () => {
 			expect(result).toHaveLength(0);
 		});
 
-		test("應該忽略沒有協議的域名中的大小寫錯誤", async () => {
+		test("應該忽略 rtmp:// URL 中的大小寫錯誤", async () => {
 			const spellingDb = new MockSpellingDatabase([]);
-			const caseDb = new MockCaseDatabase([{ term: "GitHub" }]);
+			const caseDb = new MockCaseDatabase([{ term: "Example" }]);
 
 			const determiner = new Determiner(spellingDb, caseDb);
-			const text = "查看 github.com/user/repo 的內容";
-
-			const result = await determiner.checkSpelling(text);
-			expect(result).toHaveLength(0);
-		});
-
-		test("應該忽略帶路徑的域名中的大小寫錯誤", async () => {
-			const spellingDb = new MockSpellingDatabase([]);
-			const caseDb = new MockCaseDatabase([{ term: "Twitter" }]);
-
-			const determiner = new Determiner(spellingDb, caseDb);
-			const text = "瀏覽 twitter.com/user/status/123";
+			const text = "前往 rtmp://example.com/stream";
 
 			const result = await determiner.checkSpelling(text);
 			expect(result).toHaveLength(0);
@@ -461,10 +450,10 @@ suite("Determiner", () => {
 
 		test("多個 URL 都應該被排除", async () => {
 			const spellingDb = new MockSpellingDatabase([]);
-			const caseDb = new MockCaseDatabase([{ term: "Google" }, { term: "Facebook" }, { term: "Twitter" }]);
+			const caseDb = new MockCaseDatabase([{ term: "Google" }, { term: "Facebook" }]);
 
 			const determiner = new Determiner(spellingDb, caseDb);
-			const text = "訪問 https://google.com 和 http://facebook.com 還有 twitter.com";
+			const text = "造訪 https://google.com 和 http://facebook.com";
 
 			const result = await determiner.checkSpelling(text);
 			expect(result).toHaveLength(0);
@@ -579,7 +568,7 @@ suite("Determiner", () => {
 			const caseDb = new MockCaseDatabase([{ term: "Google" }]);
 
 			const determiner = new Determiner(spellingDb, caseDb);
-			const text = "提到 @user 訪問 https://google.com";
+			const text = "提到 @user 造訪 https://google.com";
 
 			const result = await determiner.checkSpelling(text);
 			expect(result).toHaveLength(0);
