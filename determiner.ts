@@ -41,37 +41,111 @@ export class Determiner {
 			// 移除相對路徑（如 ./path、../img.png、/assets/icon.svg）
 			.replace(/(?:\.\.?\/|\/)[^\s]+/g, "");
 
-		// 找出所有需要排除的區塊（代碼區塊、Markdown 連結、自動連結）
+		// 找出所有需要排除的區塊（程式碼區塊、Markdown 連結、自動連結）
 		const excludedRanges: Array<{ start: number; end: number }> = [];
+		let match: RegExpExecArray | null;
 
-		// 1. 單行反引號代碼區塊 `code`
-		const singleBacktickRegex = /`[^`]+`/g;
-		let match;
-		while ((match = singleBacktickRegex.exec(content)) !== null) {
+		// 1. 雙反引號跳脫區塊 ``code``（必須在 match 其他反引號之前處理）
+		const doubleBacktickRegex = /``[^`]*``/g;
+		while ((match = doubleBacktickRegex.exec(content)) !== null) {
 			excludedRanges.push({ start: match.index, end: match.index + match[0].length });
 		}
 
-		// 2. 多行反引號代碼區塊 ```code```
+		// 輔助函式：檢查範圍是否與已排除的範圍重疊
+		const isOverlapping = (start: number, end: number): boolean => {
+			return excludedRanges.some(range => 
+				(start < range.end && end > range.start)
+			);
+		};
+
+		// 2. 單列反引號程式碼區塊 `code`
+		const singleBacktickRegex = /`[^`]*`/g;
+		while ((match = singleBacktickRegex.exec(content)) !== null) {
+			const start = match.index;
+			const end = start + match[0].length;
+			// 跳過已 match 雙反引號的範圍
+			if (!isOverlapping(start, end)) {
+				excludedRanges.push({ start, end });
+			}
+		}
+
+		// 3. 多列反引號程式碼區塊 ```code```
 		const tripleBacktickRegex = /```[\s\S]+?```/g;
 		while ((match = tripleBacktickRegex.exec(content)) !== null) {
-			excludedRanges.push({ start: match.index, end: match.index + match[0].length });
+			const start = match.index;
+			const end = start + match[0].length;
+			if (!isOverlapping(start, end)) {
+				excludedRanges.push({ start, end });
+			}
 		}
 
-		// 3. Markdown 連結 [text](url)
+		// 4. Markdown 連結 [text](url)
 		const markdownLinkRegex = /\[([^\]]*)\]\(([^)]+)\)/g;
 		while ((match = markdownLinkRegex.exec(content)) !== null) {
-			excludedRanges.push({ start: match.index, end: match.index + match[0].length });
+			const start = match.index;
+			const end = start + match[0].length;
+			if (!isOverlapping(start, end)) {
+				excludedRanges.push({ start, end });
+			}
 		}
 
-		// 4. 自動連結 <URL>
+		// 5. 自動連結 <URL>
 		const autoLinkRegex = /<[^>]+>/g;
 		while ((match = autoLinkRegex.exec(content)) !== null) {
-			excludedRanges.push({ start: match.index, end: match.index + match[0].length });
+			const start = match.index;
+			const end = start + match[0].length;
+			if (!isOverlapping(start, end)) {
+				excludedRanges.push({ start, end });
+			}
 		}
 
-		// 輔助函數：檢查位置是否在排除區塊內
+		// 合併相鄰或重疊的排除範圍（處理 ``錯誤`` 這種情況）
+		excludedRanges.sort((a, b) => a.start - b.start);
+		const mergedRanges: Array<{ start: number; end: number }> = [];
+		for (const range of excludedRanges) {
+			if (mergedRanges.length === 0) {
+				mergedRanges.push(range);
+			} else {
+				const lastRange = mergedRanges[mergedRanges.length - 1];
+				// 如果目前的範圍與上一個範圍相鄰或重疊，則合併
+				if (range.start <= lastRange.end) {
+					lastRange.end = Math.max(lastRange.end, range.end);
+				} else {
+					mergedRanges.push(range);
+				}
+			}
+		}
+
+		// 輔助函式：檢查位置是否在排除區塊內
+		// 根據 ranges 數量選擇最佳演算法：
+		// - 少量 ranges (≤10): 線性搜尋更快（開銷小）
+		// - 大量 ranges (>10): 二分搜尋更快（O(log n) vs O(n)）
 		const isExcluded = (position: number): boolean => {
-			return excludedRanges.some(range => position >= range.start && position < range.end);
+			if (mergedRanges.length === 0) return false;
+			
+			// 少量 ranges 時使用線性搜尋
+			if (mergedRanges.length <= 10) {
+				return mergedRanges.some(range => position >= range.start && position < range.end);
+			}
+			
+			// 大量 ranges 時使用二分搜尋
+			let left = 0;
+			let right = mergedRanges.length - 1;
+			let candidate = -1;
+			
+			// 找到最後一個 start <= position 的範圍
+			while (left <= right) {
+				const mid = Math.floor((left + right) / 2);
+				if (mergedRanges[mid].start <= position) {
+					candidate = mid;
+					left = mid + 1;
+				} else {
+					right = mid - 1;
+				}
+			}
+			
+			// 檢查候選 range 是否包含 position
+			return candidate >= 0 && position < mergedRanges[candidate].end;
 		};
 
 		const wordType = detectChineseType(sanitizedContent);
@@ -92,12 +166,12 @@ export class Determiner {
 
 			if (!wordRegex.test(searchText)) continue;
 
-			// 檢查匹配的詞是否在排除區塊內
+			// 檢查 match 的字詞是否在排除區塊內
 			const regexForPosition = isChinese ? new RegExp(searchWord, "gi") : new RegExp(`\\b${searchWord}\\b`, "gi");
 			let foundMatch = false;
 			let matchResult;
 			while ((matchResult = regexForPosition.exec(content)) !== null) {
-				// 檢查匹配的開始位置是否在排除區塊內
+				// 檢查 match 的開始位置是否在排除區塊內
 				if (!isExcluded(matchResult.index)) {
 					foundMatch = true;
 					break;
@@ -127,7 +201,7 @@ export class Determiner {
 			const regex = new RegExp(lowerTerm, "gi");
 			let matchResult;
 			while ((matchResult = regex.exec(content)) !== null) {
-				// 如果匹配的文字在排除區塊內，跳過大小寫檢查
+				// 如果 match 的文字在排除區塊內，跳過大小寫檢查
 				if (isExcluded(matchResult.index)) {
 					continue;
 				}
