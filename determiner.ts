@@ -53,9 +53,7 @@ export class Determiner {
 
 		// 輔助函式：檢查範圍是否與已排除的範圍重疊
 		const isOverlapping = (start: number, end: number): boolean => {
-			return excludedRanges.some(range => 
-				(start < range.end && end > range.start)
-			);
+			return excludedRanges.some(range => start < range.end && end > range.start);
 		};
 
 		// 2. 單列反引號程式碼區塊 `code`
@@ -122,17 +120,17 @@ export class Determiner {
 		// - 大量 ranges (>10): 二分搜尋更快（O(log n) vs O(n)）
 		const isExcluded = (position: number): boolean => {
 			if (mergedRanges.length === 0) return false;
-			
+
 			// 少量 ranges 時使用線性搜尋
 			if (mergedRanges.length <= 10) {
 				return mergedRanges.some(range => position >= range.start && position < range.end);
 			}
-			
+
 			// 大量 ranges 時使用二分搜尋
 			let left = 0;
 			let right = mergedRanges.length - 1;
 			let candidate = -1;
-			
+
 			// 找到最後一個 start <= position 的範圍
 			while (left <= right) {
 				const mid = Math.floor((left + right) / 2);
@@ -143,7 +141,7 @@ export class Determiner {
 					right = mid - 1;
 				}
 			}
-			
+
 			// 檢查候選 range 是否包含 position
 			return candidate >= 0 && position < mergedRanges[candidate].end;
 		};
