@@ -45,53 +45,36 @@ export class Determiner {
 		const excludedRanges: Array<{ start: number; end: number }> = [];
 		let match: RegExpExecArray | null;
 
-		// 1. 雙反引號跳脫區塊 ``code``（必須在 match 其他反引號之前處理）
-		const doubleBacktickRegex = /``[^`]*``/g;
-		while ((match = doubleBacktickRegex.exec(content)) !== null) {
-			excludedRanges.push({ start: match.index, end: match.index + match[0].length });
-		}
-
 		// 輔助函式：檢查範圍是否與已排除的範圍重疊
 		const isOverlapping = (start: number, end: number): boolean => {
 			return excludedRanges.some(range => start < range.end && end > range.start);
 		};
 
-		// 2. 單列反引號程式碼區塊 `code`
-		const singleBacktickRegex = /`[^`]*`/g;
-		while ((match = singleBacktickRegex.exec(content)) !== null) {
-			const start = match.index;
-			const end = start + match[0].length;
-			// 跳過已 match 雙反引號的範圍
-			if (!isOverlapping(start, end)) {
-				excludedRanges.push({ start, end });
-			}
-		}
-
-		// 3. 多列反引號程式碼區塊 ```code```
+		// 1. 多列 / 三反引號程式碼區塊 ```code```
 		const tripleBacktickRegex = /```[\s\S]+?```/g;
 		while ((match = tripleBacktickRegex.exec(content)) !== null) {
 			const start = match.index;
 			const end = start + match[0].length;
+			excludedRanges.push({ start, end });
+		}
+
+		// 2. 雙反引號轉義區塊 ``code``
+		const doubleBacktickRegex = /``[^`]*``/g;
+		while ((match = doubleBacktickRegex.exec(content)) !== null) {
+			const start = match.index;
+			const end = start + match[0].length;
+			// 跳過已被三反引號匹配的範圍
 			if (!isOverlapping(start, end)) {
 				excludedRanges.push({ start, end });
 			}
 		}
 
-		// 4. Markdown 連結 [text](url)
-		const markdownLinkRegex = /\[([^\]]*)\]\(([^)]+)\)/g;
-		while ((match = markdownLinkRegex.exec(content)) !== null) {
+		// 3. 單列反引號程式碼區塊 `code`
+		const singleBacktickRegex = /`[^`]*`/g;
+		while ((match = singleBacktickRegex.exec(content)) !== null) {
 			const start = match.index;
 			const end = start + match[0].length;
-			if (!isOverlapping(start, end)) {
-				excludedRanges.push({ start, end });
-			}
-		}
-
-		// 5. 自動連結 <URL>
-		const autoLinkRegex = /<[^>]+>/g;
-		while ((match = autoLinkRegex.exec(content)) !== null) {
-			const start = match.index;
-			const end = start + match[0].length;
+			// 跳過已被雙反引號或三反引號匹配的範圍
 			if (!isOverlapping(start, end)) {
 				excludedRanges.push({ start, end });
 			}
