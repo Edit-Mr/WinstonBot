@@ -50,8 +50,7 @@ export class Determiner {
 		const isOverlapping = (start: number, end: number) => ranges.some(range => start < range.end && end > range.start);
 
 		// 排除 URL、檔案路徑、@ 標記
-		this.#addMatchedRanges(content, /https?:\/\/[^\s]+/g, ranges);
-		this.#addMatchedRanges(content, /\b[a-zA-Z0-9-]+\.[a-zA-Z]{2,}(?:\/[^\s]*)?/g, ranges, isOverlapping);
+		this.#addMatchedRanges(content, /:\/\/[^\s]+/g, ranges);
 		this.#addPathRanges(content, ranges);
 		this.#addMatchedRanges(content, /@[a-zA-Z0-9_]+/g, ranges, isOverlapping);
 
@@ -78,9 +77,11 @@ export class Determiner {
 	}
 
 	/**
-	 * 新增檔案路徑範圍（需要特殊處理，避免誤判網域後的路徑）
+	 * 新增檔案路徑範圍（需要特殊處理，避免誤判 URL 中的路徑）
 	 */
 	#addPathRanges(content: string, ranges: Array<{ start: number; end: number }>): void {
+		const BACKTRACK_LENGTH = 50;
+
 		const pathRegex = /(?:\.\.?\/|\/)[^\s]+/g;
 		let match: RegExpExecArray | null;
 
@@ -88,10 +89,10 @@ export class Determiner {
 			const start = match.index;
 			const end = start + match[0].length;
 
-			// 檢查路徑前是否有網域（例如 github.com/user/repo）
-			const beforePath = content.slice(Math.max(0, start - 50), start);
-			if (/\b[a-zA-Z0-9-]+\.[a-zA-Z]{2,}\s*$/.test(beforePath)) {
-				continue; // 路徑是網域的一部分，跳過
+			// 檢查路徑前是否有 ://（例如 https://github.com/user/repo）
+			const beforePath = content.slice(Math.max(0, start - BACKTRACK_LENGTH), start);
+			if (/:\/\/[^\s]*$/.test(beforePath)) {
+				continue; // 路徑是 URL 的一部分，跳過
 			}
 
 			// 處理與現有範圍的重疊
