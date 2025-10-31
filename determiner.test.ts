@@ -262,6 +262,52 @@ suite("Determiner", () => {
 		expect(result[0].correct).toEqual(["JavaScript"]);
 	});
 
+	test("應該忽略程式碼區塊內的 http case rule 錯誤", async () => {
+		const spellingDb = new MockSpellingDatabase([]);
+		const caseDb = new MockCaseDatabase([{ term: "HTTP" }]);
+
+		const determiner = new Determiner(spellingDb, caseDb);
+		const text = "這是 `http example.com` 的程式碼";
+
+		const result = await determiner.checkSpelling(text);
+		expect(result).toHaveLength(0);
+	});
+
+	test("應該忽略多行程式碼區塊內的 http case rule 錯誤", async () => {
+		const spellingDb = new MockSpellingDatabase([]);
+		const caseDb = new MockCaseDatabase([{ term: "HTTP" }]);
+
+		const determiner = new Determiner(spellingDb, caseDb);
+		const text = "這是程式碼：\n```\nhttp example.com\n```\n的文字";
+
+		const result = await determiner.checkSpelling(text);
+		expect(result).toHaveLength(0);
+	});
+
+	test("應該檢查不在程式碼區塊內的 http case rule 錯誤", async () => {
+		const spellingDb = new MockSpellingDatabase([]);
+		const caseDb = new MockCaseDatabase([{ term: "HTTP" }]);
+
+		const determiner = new Determiner(spellingDb, caseDb);
+		const text = "這是 http example.com 的文字";
+
+		const result = await determiner.checkSpelling(text);
+		expect(result).toHaveLength(1);
+		expect(result[0].wrong).toBe("http");
+		expect(result[0].correct).toEqual(["HTTP"]);
+	});
+
+	test("應該忽略程式碼區塊內包含 URL 的 http case rule 錯誤", async () => {
+		const spellingDb = new MockSpellingDatabase([]);
+		const caseDb = new MockCaseDatabase([{ term: "HTTP" }]);
+
+		const determiner = new Determiner(spellingDb, caseDb);
+		const text = "1. 在瀏覽器中開啟 `http://localhost:3000`（或你設定的其他連接埠）";
+
+		const result = await determiner.checkSpelling(text);
+		expect(result).toHaveLength(0);
+	});
+
 	test("應該正確處理多個排除區塊", async () => {
 		const spellingDb = new MockSpellingDatabase([
 			{
