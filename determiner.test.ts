@@ -169,6 +169,25 @@ suite("Determiner", () => {
 		expect(result[0].correct).toEqual(["正確"]);
 	});
 
+	test("應該處理 Markdown 無效連結區塊內的錯誤", async () => {
+		const spellingDb = new MockSpellingDatabase([
+			{
+				wrong: "錯誤",
+				correct: ["正確"],
+				type: "spelling_correction",
+				traditionalOnly: false
+			}
+		]);
+		const caseDb = new MockCaseDatabase([]);
+
+		const determiner = new Determiner(spellingDb, caseDb);
+		const text = "這是 [hi](錯誤) 的文字";
+
+		const result = await determiner.checkSpelling(text);
+		expect(result).toHaveLength(1);
+		expect(result[0].wrong).toBe("錯誤");
+	});
+
 	test("應該忽略自動連結內的錯誤", async () => {
 		const spellingDb = new MockSpellingDatabase([
 			{
