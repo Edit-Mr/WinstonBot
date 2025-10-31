@@ -30,18 +30,7 @@ export class Determiner {
 		const [rules, caseRules] = await Promise.all([this.#spellingDatabase.getRules(), this.#caseDatabase.getRules()]);
 		const mistakes: SpellingMistake[] = [];
 
-		// 先排除 URL 和 @ 開頭的字詞
-		let sanitizedContent = content
-			// 移除完整網址（含 http/https）
-			.replace(/https?:\/\/[^\s]+/g, "")
-			// 移除 @開頭的詞
-			.replace(/@[a-zA-Z0-9_]+/g, "")
-			// 移除類似網址但沒 http（例如 google.com、example.org/page）
-			.replace(/\b[a-zA-Z0-9-]+\.[a-zA-Z]{2,}(?:\/[^\s]*)?/g, "")
-			// 移除相對路徑（如 ./path、../img.png、/assets/icon.svg）
-			.replace(/(?:\.\.?\/|\/)[^\s]+/g, "");
-
-		// 找出所有需要排除的區塊（程式碼區塊、Markdown 連結、自動連結）
+		// 找出所有需要排除的區塊
 		const excludedRanges: Array<{ start: number; end: number }> = [];
 		let match: RegExpExecArray | null;
 
@@ -49,6 +38,66 @@ export class Determiner {
 		const isOverlapping = (start: number, end: number): boolean => {
 			return excludedRanges.some(range => start < range.end && end > range.start);
 		};
+
+		// 0. 排除 URL 和 @ 開頭的字詞
+		// 需要在其他排除之前執行，因為 URL 可能包含其他標記
+
+		// 完整網址（含 http/https）
+		const httpUrlRegex = /https?:\/\/[^\s]+/g;
+		while ((match = httpUrlRegex.exec(content)) !== null) {
+			const start = match.index;
+			const end = start + match[0].length;
+			excludedRanges.push({ start, end });
+		}
+
+		// 類似網址但沒 http（例如 google.com、example.org/page）
+		// 需要在路徑比對之前執行，因為路徑可能是網域的一部分
+		const domainRegex = /\b[a-zA-Z0-9-]+\.[a-zA-Z]{2,}(?:\/[^\s]*)?/g;
+		while ((match = domainRegex.exec(content)) !== null) {
+			const start = match.index;
+			const end = start + match[0].length;
+			// 跳過已被 http/https URL match 到的範圍
+			if (!isOverlapping(start, end)) {
+				excludedRanges.push({ start, end });
+			}
+		}
+		// 相對路徑和絕對路徑（如 ./path、../img.png、/assets/icon.svg）
+		// 檢查路徑前面是否有網域模式，如果有則跳過（因為是網域的一部分）
+		const relativePathRegex = /(?:\.\.?\/|\/)[^\s]+/g;
+		while ((match = relativePathRegex.exec(content)) !== null) {
+			const start = match.index;
+			const end = start + match[0].length;
+			// 檢查路徑前面是否有網域模式（例如 github.com/user/repo 中的 /user/repo）
+			const beforePath = content.slice(Math.max(0, start - 50), start);
+			const domainBeforePath = /\b[a-zA-Z0-9-]+\.[a-zA-Z]{2,}\s*$/.test(beforePath);
+			if (domainBeforePath) {
+				// 路徑是網域的一部分，跳過
+				continue;
+			}
+			// 如果路徑與現有排除範圍重疊，檢查是否應該替換現有範圍
+			const overlappingIndex = excludedRanges.findIndex(range => start < range.end && end > range.start);
+			if (overlappingIndex >= 0) {
+				const overlappingRange = excludedRanges[overlappingIndex];
+				// 如果路徑完全包含現有排除範圍，則替換（路徑範圍更大）
+				if (start <= overlappingRange.start && end >= overlappingRange.end) {
+					excludedRanges[overlappingIndex] = { start, end };
+				}
+				// 否則跳過（現有排除範圍更大或部分重疊）
+			} else {
+				excludedRanges.push({ start, end });
+			}
+		}
+
+		// @ 開頭的詞（支援英文、數字、底線）
+		const mentionRegex = /@[a-zA-Z0-9_]+/g;
+		while ((match = mentionRegex.exec(content)) !== null) {
+			const start = match.index;
+			const end = start + match[0].length;
+			// 跳過已被 URL match 到的範圍
+			if (!isOverlapping(start, end)) {
+				excludedRanges.push({ start, end });
+			}
+		}
 
 		// 1. 多列 / 三反引號程式碼區塊 ```code```
 		const tripleBacktickRegex = /```[\s\S]+?```/g;
@@ -129,6 +178,21 @@ export class Determiner {
 			return candidate >= 0 && position < mergedRanges[candidate].end;
 		};
 
+		// 輔助函式：從原始內容中排除 excludedRanges 的部分，用於類型檢測和搜索
+		const getSanitizedContent = (): string => {
+			if (mergedRanges.length === 0) return content;
+			
+			let sanitized = "";
+			let lastIndex = 0;
+			for (const range of mergedRanges) {
+				sanitized += content.slice(lastIndex, range.start);
+				lastIndex = range.end;
+			}
+			sanitized += content.slice(lastIndex);
+			return sanitized;
+		};
+
+		const sanitizedContent = getSanitizedContent();
 		const wordType = detectChineseType(sanitizedContent);
 
 		// 檢查一般規則（proper 和 warn）
@@ -170,11 +234,13 @@ export class Determiner {
 		}
 
 		// 檢查大小寫規則
+		// 記錄已處理的匹配位置，避免重複處理
+		const processedMatches = new Set<number>();
 		for (const rule of caseRules) {
 			const lowerTerm = rule.term.toLowerCase();
-			const contentLower = sanitizedContent.toLowerCase();
+			const contentLower = content.toLowerCase();
 
-			// 如果找到相同的字詞但大小寫不同
+			// 如果找到相同的字詞但大小寫不同（在原始內容上檢查）
 			if (!contentLower.includes(lowerTerm)) {
 				continue;
 			}
@@ -187,8 +253,14 @@ export class Determiner {
 					continue;
 				}
 
+				// 如果已經處理過這個位置，跳過
+				if (processedMatches.has(matchResult.index)) {
+					continue;
+				}
+
 				const match = matchResult[0];
 				if (match === rule.term) {
+					processedMatches.add(matchResult.index);
 					continue;
 				}
 
@@ -204,9 +276,8 @@ export class Determiner {
 						correct: [rule.term],
 						type: "case"
 					});
+					processedMatches.add(matchResult.index);
 				}
-
-				sanitizedContent = sanitizedContent.replace(match, rule.term);
 			}
 		}
 

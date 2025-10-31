@@ -352,4 +352,237 @@ suite("Determiner", () => {
 		const result = await determiner.checkSpelling(text);
 		expect(result).toHaveLength(0);
 	});
+
+	test("不應該處理網址的大小寫問題", async () => {
+		const spellingDb = new MockSpellingDatabase([]);
+		const caseDb = new MockCaseDatabase([
+			{
+				term: "Instagram"
+			}
+		]);
+
+		const determiner = new Determiner(spellingDb, caseDb);
+		const text = "[Instagram](https://instagram.com/em.tec.blog)";
+
+		const result = await determiner.checkSpelling(text);
+		expect(result).toHaveLength(0);
+	});
+
+	suite("URL 大小寫排除邏輯", () => {
+		test("應該忽略 http:// URL 中的大小寫錯誤", async () => {
+			const spellingDb = new MockSpellingDatabase([]);
+			const caseDb = new MockCaseDatabase([{ term: "Google" }]);
+
+			const determiner = new Determiner(spellingDb, caseDb);
+			const text = "訪問 http://google.com/search 查詢";
+
+			const result = await determiner.checkSpelling(text);
+			expect(result).toHaveLength(0);
+		});
+
+		test("應該忽略 https:// URL 中的大小寫錯誤", async () => {
+			const spellingDb = new MockSpellingDatabase([]);
+			const caseDb = new MockCaseDatabase([{ term: "Facebook" }]);
+
+			const determiner = new Determiner(spellingDb, caseDb);
+			const text = "前往 https://facebook.com/profile";
+
+			const result = await determiner.checkSpelling(text);
+			expect(result).toHaveLength(0);
+		});
+
+		test("應該忽略沒有協議的域名中的大小寫錯誤", async () => {
+			const spellingDb = new MockSpellingDatabase([]);
+			const caseDb = new MockCaseDatabase([{ term: "GitHub" }]);
+
+			const determiner = new Determiner(spellingDb, caseDb);
+			const text = "查看 github.com/user/repo 的內容";
+
+			const result = await determiner.checkSpelling(text);
+			expect(result).toHaveLength(0);
+		});
+
+		test("應該忽略帶路徑的域名中的大小寫錯誤", async () => {
+			const spellingDb = new MockSpellingDatabase([]);
+			const caseDb = new MockCaseDatabase([{ term: "Twitter" }]);
+
+			const determiner = new Determiner(spellingDb, caseDb);
+			const text = "瀏覽 twitter.com/user/status/123";
+
+			const result = await determiner.checkSpelling(text);
+			expect(result).toHaveLength(0);
+		});
+
+		test("應該忽略相對路徑中的大小寫錯誤", async () => {
+			const spellingDb = new MockSpellingDatabase([]);
+			const caseDb = new MockCaseDatabase([{ term: "Image" }]);
+
+			const determiner = new Determiner(spellingDb, caseDb);
+			const text = "載入 ./image.png 檔案";
+
+			const result = await determiner.checkSpelling(text);
+			expect(result).toHaveLength(0);
+		});
+
+		test("應該忽略父目錄路徑中的大小寫錯誤", async () => {
+			const spellingDb = new MockSpellingDatabase([]);
+			const caseDb = new MockCaseDatabase([{ term: "Config" }]);
+
+			const determiner = new Determiner(spellingDb, caseDb);
+			const text = "讀取 ../config.json 設定";
+
+			const result = await determiner.checkSpelling(text);
+			expect(result).toHaveLength(0);
+		});
+
+		test("應該忽略絕對路徑中的大小寫錯誤", async () => {
+			const spellingDb = new MockSpellingDatabase([]);
+			const caseDb = new MockCaseDatabase([{ term: "Asset" }]);
+
+			const determiner = new Determiner(spellingDb, caseDb);
+			const text = "使用 /asset/icon.svg 圖示";
+
+			const result = await determiner.checkSpelling(text);
+			expect(result).toHaveLength(0);
+		});
+
+		test("URL 外的文字仍應檢查大小寫", async () => {
+			const spellingDb = new MockSpellingDatabase([]);
+			const caseDb = new MockCaseDatabase([{ term: "JavaScript" }]);
+
+			const determiner = new Determiner(spellingDb, caseDb);
+			const text = "使用 javascript 開發，參考 https://javascript.info";
+
+			const result = await determiner.checkSpelling(text);
+			expect(result).toHaveLength(1);
+			expect(result[0].wrong).toBe("javascript");
+			expect(result[0].correct).toEqual(["JavaScript"]);
+		});
+
+		test("多個 URL 都應該被排除", async () => {
+			const spellingDb = new MockSpellingDatabase([]);
+			const caseDb = new MockCaseDatabase([{ term: "Google" }, { term: "Facebook" }, { term: "Twitter" }]);
+
+			const determiner = new Determiner(spellingDb, caseDb);
+			const text = "訪問 https://google.com 和 http://facebook.com 還有 twitter.com";
+
+			const result = await determiner.checkSpelling(text);
+			expect(result).toHaveLength(0);
+		});
+
+		test("URL 與 Markdown 連結混合時，URL 部分應被排除", async () => {
+			const spellingDb = new MockSpellingDatabase([]);
+			const caseDb = new MockCaseDatabase([{ term: "Instagram" }]);
+
+			const determiner = new Determiner(spellingDb, caseDb);
+			const text = "這是 [連結](https://instagram.com/user) 的文字";
+
+			const result = await determiner.checkSpelling(text);
+			expect(result).toHaveLength(0);
+		});
+	});
+
+	suite("@ 開頭的詞排除邏輯", () => {
+		test("應該忽略 @ 開頭的詞中的拼寫錯誤", async () => {
+			const spellingDb = new MockSpellingDatabase([
+				{
+					wrong: "test",
+					correct: ["Test"],
+					type: "spelling_correction",
+					traditionalOnly: false
+				}
+			]);
+			const caseDb = new MockCaseDatabase([]);
+
+			const determiner = new Determiner(spellingDb, caseDb);
+			const text = "提到 @test_user 的使用者";
+
+			const result = await determiner.checkSpelling(text);
+			expect(result).toHaveLength(0);
+		});
+
+		test("應該忽略 @ 開頭的詞中的大小寫錯誤", async () => {
+			const spellingDb = new MockSpellingDatabase([]);
+			const caseDb = new MockCaseDatabase([{ term: "JavaScript" }]);
+
+			const determiner = new Determiner(spellingDb, caseDb);
+			const text = "標記 @javascript 開發者";
+
+			const result = await determiner.checkSpelling(text);
+			expect(result).toHaveLength(0);
+		});
+
+		test("@ 開頭的詞應該支援底線和數字", async () => {
+			const spellingDb = new MockSpellingDatabase([
+				{
+					wrong: "user",
+					correct: ["User"],
+					type: "spelling_correction",
+					traditionalOnly: false
+				}
+			]);
+			const caseDb = new MockCaseDatabase([]);
+
+			const determiner = new Determiner(spellingDb, caseDb);
+			const text = "提到 @user_123 和 @test_user";
+
+			const result = await determiner.checkSpelling(text);
+			expect(result).toHaveLength(0);
+		});
+
+		test("@ 開頭的詞外的文字仍應檢查", async () => {
+			const spellingDb = new MockSpellingDatabase([
+				{
+					wrong: "user",
+					correct: ["User"],
+					type: "spelling_correction",
+					traditionalOnly: false
+				}
+			]);
+			const caseDb = new MockCaseDatabase([]);
+
+			const determiner = new Determiner(spellingDb, caseDb);
+			const text = "提到 @user123 這裡有 user";
+
+			const result = await determiner.checkSpelling(text);
+			expect(result).toHaveLength(1);
+			expect(result[0].wrong).toBe("user");
+		});
+
+		test("多個 @ 開頭的詞都應該被排除", async () => {
+			const spellingDb = new MockSpellingDatabase([
+				{
+					wrong: "user",
+					correct: ["User"],
+					type: "spelling_correction",
+					traditionalOnly: false
+				}
+			]);
+			const caseDb = new MockCaseDatabase([{ term: "JavaScript" }]);
+
+			const determiner = new Determiner(spellingDb, caseDb);
+			const text = "提到 @user1 @user2 和 @admin";
+
+			const result = await determiner.checkSpelling(text);
+			expect(result).toHaveLength(0);
+		});
+
+		test("@ 開頭的詞與 URL 混合時都應被排除", async () => {
+			const spellingDb = new MockSpellingDatabase([
+				{
+					wrong: "user",
+					correct: ["User"],
+					type: "spelling_correction",
+					traditionalOnly: false
+				}
+			]);
+			const caseDb = new MockCaseDatabase([{ term: "Google" }]);
+
+			const determiner = new Determiner(spellingDb, caseDb);
+			const text = "提到 @user 訪問 https://google.com";
+
+			const result = await determiner.checkSpelling(text);
+			expect(result).toHaveLength(0);
+		});
+	});
 });
