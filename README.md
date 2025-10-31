@@ -24,19 +24,20 @@ GitHub Actions CI 版本請見 [WinstonBot-CI](https://github.com/Edit-Mr/Winsto
 
 1. 複製專案
 
-   ```
-   git clone https://github.com/yourusername/winstonbot.git
-   cd winstonbot
+   ```shell
+   git clone https://github.com/Edit-Mr/WinstonBot.git
+   cd WinstonBot
    ```
 
 2. 安裝依賴
 
-   ```
+   ```shell
    pnpm install
    ```
 
 3. 設定環境變數在專案根目錄建立 `.env` 檔案，並填入以下內容：
-   ```
+
+   ```env
    DISCORD_TOKEN=你的Discord機器人Token
    MONGODB_URI=你的MongoDB連線字串
    WEB_PORT=3000
@@ -46,7 +47,7 @@ GitHub Actions CI 版本請見 [WinstonBot-CI](https://github.com/Edit-Mr/Winsto
 
 ### 啟動應用程式
 
-```
+```shell
 pnpm start
 ```
 
@@ -82,6 +83,7 @@ WinstonBot 使用 MongoDB 儲存兩種類型的規則：
 
 2. 大小寫規則 (CaseRule)：
    - 正確的大小寫形式
+   - 替代大小寫形式（如 App 也可以寫成 app）
 
 ## 開發與貢獻
 
@@ -90,19 +92,3 @@ WinstonBot 使用 MongoDB 儲存兩種類型的規則：
 ## 授權
 
 本專案採用 Apache 2.0 授權。
-
-```bash
-git clone https://github.com/Edit-Mr/WinstonBot.git
-cd WinstonBot
-pnpm install
-```
-
-設定 `.env` 檔案
-
-```env
-DISCORD_TOKEN=
-```
-
-```bash
-pnpm start
-```
