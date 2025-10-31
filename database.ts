@@ -1,7 +1,8 @@
 import mongoose, { type ObjectId } from "mongoose";
 import type { SpellingRule, CaseRule, SpellingRuleType } from "./models.ts";
+import type { ISpellingDatabase, ICaseDatabase } from "./database-interfaces.ts";
 
-export class SpellingDatabase {
+export class SpellingDatabase implements ISpellingDatabase {
 	#rules: SpellingRule[] | null;
 	#collection: mongoose.Collection<SpellingRule>;
 
@@ -95,7 +96,7 @@ export class SpellingDatabase {
 	}
 }
 
-export class CaseDatabase {
+export class CaseDatabase implements ICaseDatabase {
 	#rules: CaseRule[] | null;
 	#collection: mongoose.Collection<CaseRule>;
 

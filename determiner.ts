@@ -1,5 +1,5 @@
 import { detectChineseType } from "./zhhanttw.ts";
-import type { CaseDatabase, SpellingDatabase } from "./database.ts";
+import type { ISpellingDatabase, ICaseDatabase } from "./database-interfaces.ts";
 import { type SpellingRuleType } from "./models.ts";
 
 /**
@@ -13,10 +13,10 @@ export interface SpellingMistake {
 }
 
 export class Determiner {
-	#spellingDatabase: SpellingDatabase;
-	#caseDatabase: CaseDatabase;
+	#spellingDatabase: ISpellingDatabase;
+	#caseDatabase: ICaseDatabase;
 
-	constructor(spellingDatabase: SpellingDatabase, caseDatabase: CaseDatabase) {
+	constructor(spellingDatabase: ISpellingDatabase, caseDatabase: ICaseDatabase) {
 		this.#spellingDatabase = spellingDatabase;
 		this.#caseDatabase = caseDatabase;
 	}
