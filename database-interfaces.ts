@@ -103,4 +103,3 @@ export interface ICaseDatabase {
 	 */
 	invalidateCache(): void;
 }
-
