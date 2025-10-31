@@ -574,4 +574,184 @@ suite("Determiner", () => {
 			expect(result).toHaveLength(0);
 		});
 	});
+
+	suite("caserules alternatives 功能", () => {
+		test("應該接受 alternatives 中列出的有效大小寫形式", async () => {
+			const spellingDb = new MockSpellingDatabase([]);
+			const caseDb = new MockCaseDatabase([
+				{
+					term: "JavaScript",
+					alternatives: ["JAVASCRIPT", "javascript"]
+				}
+			]);
+
+			const determiner = new Determiner(spellingDb, caseDb);
+			const text = "使用 JavaScript, JAVASCRIPT, javascript 開發";
+
+			const result = await determiner.checkSpelling(text);
+			expect(result).toHaveLength(0);
+		});
+
+		test("應該標記不在 term 或 alternatives 中的大小寫形式為錯誤", async () => {
+			const spellingDb = new MockSpellingDatabase([]);
+			const caseDb = new MockCaseDatabase([
+				{
+					term: "JavaScript",
+					alternatives: ["JAVASCRIPT", "javascript"]
+				}
+			]);
+
+			const determiner = new Determiner(spellingDb, caseDb);
+			const text = "使用 JavaScript 和 JavaScrIPT 開發";
+
+			const result = await determiner.checkSpelling(text);
+			expect(result).toHaveLength(1);
+			expect(result[0].wrong).toBe("JavaScrIPT");
+			expect(result[0].correct).toEqual(["JavaScript"]);
+			expect(result[0].type).toBe("case");
+		});
+
+		test("當 alternatives 為空陣列時應該像沒有 alternatives 一樣運作", async () => {
+			const spellingDb = new MockSpellingDatabase([]);
+			const caseDb = new MockCaseDatabase([
+				{
+					term: "TypeScript",
+					alternatives: []
+				}
+			]);
+
+			const determiner = new Determiner(spellingDb, caseDb);
+			const text = "使用 TypeScript 和 typescript 開發";
+
+			const result = await determiner.checkSpelling(text);
+			expect(result).toHaveLength(1);
+			expect(result[0].wrong).toBe("typescript");
+			expect(result[0].correct).toEqual(["TypeScript"]);
+		});
+
+		test("當 alternatives 為 null 時應該像沒有 alternatives 一樣運作", async () => {
+			const spellingDb = new MockSpellingDatabase([]);
+			const caseDb = new MockCaseDatabase([
+				{
+					term: "Python",
+					alternatives: null
+				}
+			]);
+
+			const determiner = new Determiner(spellingDb, caseDb);
+			const text = "使用 Python 和 python 開發";
+
+			const result = await determiner.checkSpelling(text);
+			expect(result).toHaveLength(1);
+			expect(result[0].wrong).toBe("python");
+			expect(result[0].correct).toEqual(["Python"]);
+		});
+
+		test("當 alternatives 為 undefined 時應該像沒有 alternatives 一樣運作", async () => {
+			const spellingDb = new MockSpellingDatabase([]);
+			const caseDb = new MockCaseDatabase([
+				{
+					term: "React"
+				}
+			]);
+
+			const determiner = new Determiner(spellingDb, caseDb);
+			const text = "使用 React 和 react 開發";
+
+			const result = await determiner.checkSpelling(text);
+			expect(result).toHaveLength(1);
+			expect(result[0].wrong).toBe("react");
+			expect(result[0].correct).toEqual(["React"]);
+		});
+
+		test("應該支援多個 alternatives", async () => {
+			const spellingDb = new MockSpellingDatabase([]);
+			const caseDb = new MockCaseDatabase([
+				{
+					term: "API",
+					alternatives: ["Api", "api", "APIs"]
+				}
+			]);
+
+			const determiner = new Determiner(spellingDb, caseDb);
+			const text = "使用 API, Api, api, APIs 開發";
+
+			const result = await determiner.checkSpelling(text);
+			expect(result).toHaveLength(0);
+		});
+
+		test("多個 alternatives 中，不在清單中的應該被標記為錯誤", async () => {
+			const spellingDb = new MockSpellingDatabase([]);
+			const caseDb = new MockCaseDatabase([
+				{
+					term: "API",
+					alternatives: ["Api", "api"]
+				}
+			]);
+
+			const determiner = new Determiner(spellingDb, caseDb);
+			const text = "使用 API, Api, api, ApI 開發";
+
+			const result = await determiner.checkSpelling(text);
+			expect(result).toHaveLength(1);
+			expect(result[0].wrong).toBe("ApI");
+			expect(result[0].correct).toEqual(["API"]);
+		});
+
+		test("應該忽略程式碼區塊內的 alternatives 大小寫", async () => {
+			const spellingDb = new MockSpellingDatabase([]);
+			const caseDb = new MockCaseDatabase([
+				{
+					term: "JavaScript",
+					alternatives: ["javascript"]
+				}
+			]);
+
+			const determiner = new Determiner(spellingDb, caseDb);
+			const text = "這是 `JAVASCRIPT` 的程式碼";
+
+			const result = await determiner.checkSpelling(text);
+			expect(result).toHaveLength(0);
+		});
+
+		test("應該檢查不在程式碼區塊內的 alternatives 大小寫錯誤", async () => {
+			const spellingDb = new MockSpellingDatabase([]);
+			const caseDb = new MockCaseDatabase([
+				{
+					term: "JavaScript",
+					alternatives: ["javascript"]
+				}
+			]);
+
+			const determiner = new Determiner(spellingDb, caseDb);
+			const text = "這是 JAVASCRIPT 的文字";
+
+			const result = await determiner.checkSpelling(text);
+			expect(result).toHaveLength(1);
+			expect(result[0].wrong).toBe("JAVASCRIPT");
+			expect(result[0].correct).toEqual(["JavaScript"]);
+		});
+
+		test("多個規則都應該正確處理各自的 alternatives", async () => {
+			const spellingDb = new MockSpellingDatabase([]);
+			const caseDb = new MockCaseDatabase([
+				{
+					term: "JavaScript",
+					alternatives: ["javascript"]
+				},
+				{
+					term: "TypeScript",
+					alternatives: ["TypeScript"]
+				}
+			]);
+
+			const determiner = new Determiner(spellingDb, caseDb);
+			const text = "使用 JavaScript, javascript, TypeScript, typescript 開發";
+
+			const result = await determiner.checkSpelling(text);
+			expect(result).toHaveLength(1);
+			expect(result[0].wrong).toBe("typescript");
+			expect(result[0].correct).toEqual(["TypeScript"]);
+		});
+	});
 });
