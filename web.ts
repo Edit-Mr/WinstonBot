@@ -4,7 +4,7 @@ import fastifyFormBody from "@fastify/formbody";
 import { join } from "path";
 import { fileURLToPath } from "url";
 import { Determiner } from "./determiner.ts";
-import { SpellingDatabase, CaseDatabase } from "./database.ts";
+import type { ISpellingDatabase, ICaseDatabase } from "./database-interfaces.ts";
 
 // Get the directory name of the current module
 const __dirname = fileURLToPath(new URL(".", import.meta.url));
@@ -12,7 +12,7 @@ const __dirname = fileURLToPath(new URL(".", import.meta.url));
 /**
  * Initialize and start the Fastify web server
  */
-export async function startWebServer(spellingDatabase: SpellingDatabase, caseDatabase: CaseDatabase, port: number = 3000) {
+export async function startWebServer(spellingDatabase: ISpellingDatabase, caseDatabase: ICaseDatabase, port: number = 3000) {
 	const determiner = new Determiner(spellingDatabase, caseDatabase);
 	const fastify = Fastify({ logger: true });
 
