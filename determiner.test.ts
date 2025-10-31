@@ -286,4 +286,35 @@ suite("Determiner", () => {
 		const result = await determiner.checkSpelling(text);
 		expect(result).toHaveLength(0);
 	});
+
+	test("兩個空反引號內的文字應該被忽略 (inline code block)", async () => {
+		const spellingDb = new MockSpellingDatabase([]);
+		const caseDb = new MockCaseDatabase([{ term: "JavaScript" }]);
+
+		const determiner = new Determiner(spellingDb, caseDb);
+		const text = "這是 ``javascript`` 的文字";
+
+		const result = await determiner.checkSpelling(text);
+		expect(result).toHaveLength(0);
+	});
+
+	test("應該無視只有單邊的空反引號", async () => {
+		const spellingDb = new MockSpellingDatabase([
+			{
+				wrong: "test",
+				correct: ["測試"],
+				type: "spelling_correction",
+				traditionalOnly: false
+			}
+		]);
+		const caseDb = new MockCaseDatabase([]);
+
+		const determiner = new Determiner(spellingDb, caseDb);
+		const text = "這是 `` 然後這裡有 test 錯誤";
+
+		const result = await determiner.checkSpelling(text);
+		expect(result).toHaveLength(1);
+		expect(result[0].wrong).toBe("test");
+		expect(result[0].correct).toEqual(["測試"]);
+	});
 });
