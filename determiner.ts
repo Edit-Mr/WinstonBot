@@ -54,7 +54,7 @@ export class Determiner {
 		const isOverlapping = (start: number, end: number) => ranges.some(range => start < range.end && end > range.start);
 
 		// 排除 URL、檔案路徑、@ 標記
-		this.#addMatchedRanges(content, new RegExp(this.#URL_REGEX, 'g'), ranges);
+		this.#addMatchedRanges(content, new RegExp(this.#URL_REGEX, "g"), ranges);
 		this.#addPathRanges(content, ranges);
 		this.#addMatchedRanges(content, /@[a-zA-Z0-9_]+/g, ranges, isOverlapping);
 
