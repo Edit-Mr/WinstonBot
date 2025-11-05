@@ -239,12 +239,7 @@ export class Determiner {
 
 		for (const rule of caseRules) {
 			// 收集所有有效的大小寫形式：term 和 alternatives
-			const validForms = new Set<string>([rule.term]);
-			if (rule.alternatives && rule.alternatives.length > 0) {
-				for (const alt of rule.alternatives) {
-					validForms.add(alt);
-				}
-			}
+			const validForms = new Set<string>([rule.term, ...(rule.alternatives ?? [])]);
 
 			const lowerTerm = rule.term.toLowerCase();
 			// 先在 sanitized content 中檢查是否存在該 term，避免在排除區塊中搜尋
